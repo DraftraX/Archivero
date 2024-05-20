@@ -1,0 +1,28 @@
+.Login{
+    height: 100vh;
+
+    .formato{
+        position: relative;
+        display: grid;
+        align-items: center;
+        top: 10vh;
+        height: 80vh;
+        border-radius: 20px 20px 20px 20px;
+        box-shadow: 8px 4px rgb(95, 93, 93);
+
+    }
+    .form{
+        display: grid;
+        justify-content: center;
+        h3{
+            font-size: small;
+        }
+        .boton{
+            display: flex;
+            align-items: center;
+            height: 5vh;
+            width: 100%;
+            justify-content: center;
+        }
+    }
+}
