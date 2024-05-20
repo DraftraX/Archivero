@@ -2,7 +2,7 @@ import * as React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 
-export function Username() {
+export function Username({ value, onChange }) {
   return (
     <Box
       sx={{
@@ -15,6 +15,8 @@ export function Username() {
         id="standard-basic"
         label="usuario"
         type="email"
+        value={value}
+        onChange={onChange}
         className="bg-purple-50"
         pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
       />
@@ -22,7 +24,7 @@ export function Username() {
   );
 }
 
-export function Password() {
+export function Password({ value, onChange }) {
   return (
     <Box
       sx={{
@@ -35,6 +37,8 @@ export function Password() {
         id="standard-basic"
         label="contraseña"
         type="password"
+        value={value}
+        onChange={onChange}
         className="bg-purple-50"
       />
     </Box>

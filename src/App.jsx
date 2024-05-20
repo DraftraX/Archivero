@@ -6,6 +6,7 @@ import { RestablecerContrasena } from "./modules/pages/RestablecerContrasena";
 import { CrearUsuario } from "./modules/pages/CrearUsuario";
 import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import { PaginaPrincipal } from "./modules/pages/PaginaPrincipal";
+import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
@@ -15,10 +16,12 @@ function App() {
           {/* ruta inicial */}
           <Route path="/" element={<Navigate to="/panelprincipal" />} />
 
+          {/* Rutas protegidas */}
+          <Route path="/register" element={<PrivateRoute><RestablecerContrasena /></PrivateRoute>} />
+          <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
+
           {/* demas rutas */}
           <Route path="/login" element={<IniciarSesion />} />
-          <Route path="/register" element={<RestablecerContrasena />} />
-          <Route path="/create" element={<CrearUsuario />} />
           <Route path="/panelprincipal" element={<PanelPrincipal />} />
           <Route path="/paginaprincipal" element={<PaginaPrincipal />} />
         </Routes>
