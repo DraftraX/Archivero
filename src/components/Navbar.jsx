@@ -2,11 +2,13 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 
+
 const navigation = [
-  { name: "Archivos", href: "#", current: false },
-  { name: "Documentos", href: "#", current: false },
-  { name: "Registros", href: "#", current: false },
-  { name: "Datos", href: "#", current: false },
+  { name: "Archivos de Gestion", href: "#", current: false },
+  { name: "Oficinas Academicas", href: "#", current: false },
+  { name: "Vicerrectoria de Investigacion", href: "#", current: false },
+  { name: "Oficinas Administrativas", href: "#", current: false },
+  { name: "Archivos Externos", href: "#", current: false },
 ];
 
 function classNames(...classes) {
@@ -51,7 +53,7 @@ export default function Navbar() {
               <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                 <button
                   type="button"
-                  className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
+                  className="relative rounded-full bg-blue-100 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
                 >
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">View notifications</span>
@@ -110,7 +112,7 @@ export default function Navbar() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/logout"
                             className={classNames(
                               active ? "bg-gray-100" : "",
                               "block px-4 py-2 text-sm text-gray-700"

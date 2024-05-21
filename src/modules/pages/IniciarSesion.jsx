@@ -31,7 +31,7 @@ export function IniciarSesion() {
         localStorage.setItem('token', result.token);
         //localStorage.setItem('rol', result.rol);
         alert("Inicio de sesión exitoso");
-        navigate('/panelprincipal');
+        navigate('/paginaprincipal');
       } 
       else 
       {
