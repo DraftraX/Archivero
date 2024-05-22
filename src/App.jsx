@@ -6,6 +6,7 @@ import { RestablecerContrasena } from "./modules/pages/RestablecerContrasena";
 import { CrearUsuario } from "./modules/pages/CrearUsuario";
 import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import { PaginaPrincipal } from "./modules/pages/PaginaPrincipal";
+import { VistaTablas } from "./modules/pages/VistaTablas";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -24,6 +25,7 @@ function App() {
           <Route path="/login" element={<IniciarSesion />} />
           <Route path="/panelprincipal" element={<PanelPrincipal />} />
           <Route path="/paginaprincipal" element={<PaginaPrincipal />} />
+          <Route path="/tablas" element={<VistaTablas />} />
         </Routes>
       </div>
     </BrowserRouter>

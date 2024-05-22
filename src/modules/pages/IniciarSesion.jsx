@@ -25,22 +25,18 @@ export function IniciarSesion() {
         body: JSON.stringify(loginRequest),
       });
 
-      if (response.ok) 
-      {
+      if (response.ok) {
         const result = await response.json();
-        localStorage.setItem('token', result.token);
-        //localStorage.setItem('rol', result.rol);
+        const token = result.token;
+        localStorage.setItem('token', token);
+
         alert("Inicio de sesión exitoso");
         navigate('/paginaprincipal');
-      } 
-      else 
-      {
+      } else {
         alert("Error en el inicio de sesión");
         console.error('Error en el inicio de sesión');
       }
-    } 
-    catch (error)
-    {
+    } catch (error) {
       console.error('Error en el inicio de sesión:', error);
     }
   };
