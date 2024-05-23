@@ -4,20 +4,27 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 
 const navigation = [
-  { name: "Archivos de Gestion", href: "#", current: false },
-  { name: "Oficinas Academicas", href: "#", current: false },
-  { name: "Vicerrectoria de Investigacion", href: "#", current: false },
-  { name: "Oficinas Administrativas", href: "#", current: false },
-  { name: "Archivos Externos", href: "#", current: false },
+  { name: "Archivos de Gestion", href: "/tablas", message: "verdocumentosporcriteriomayor/1", current: false },
+  { name: "Oficinas Academicas", href: "/tablas", message: "verdocumentosporcriteriomayor/2", current: false },
+  { name: "Vicerrectoria de Investigacion", href: "/tablas", message: "verdocumentosporcriteriomayor/3", current: false },
+  { name: "Oficinas Administrativas", href: "/tablas", message: "verdocumentosporcriteriomayor/4", current: false },
+  { name: "Archivos Externos", href: "/tablas", message: "verdocumentosporcriteriomayor/5", current: false },
 ];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar()
-{
+export default function Navbar() {
   const navigate = useNavigate();
+
+  const handleNavigation = (href, message) => {
+    localStorage.setItem('navMessage', message);
+    navigate(href);
+    if (href === "/tablas") {
+      window.location.reload();
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -32,14 +39,11 @@ export default function Navbar()
       if (response.ok) {
         alert("Sesión cerrada con éxito.");
         navigate("/panelprincipal");
-      }
-      else
-      {
+      } else {
         alert("Error al cerrar la sesión.");
         console.error('Error al cerrar la sesión');
       }
-    } catch (error)
-    {
+    } catch (error) {
       console.error('Error al cerrar la sesión:', error);
     }
   };
@@ -61,9 +65,9 @@ export default function Navbar()
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4 my-2">
                     {navigation.map((item) => (
-                      <a
+                      <button
                         key={item.name}
-                        href={item.href}
+                        onClick={() => handleNavigation(item.href, item.message)}
                         className={classNames(
                           item.current
                             ? "bg-gray-900 text-white"
@@ -73,7 +77,7 @@ export default function Navbar()
                         aria-current={item.current ? "page" : undefined}
                       >
                         {item.name}
-                      </a>
+                      </button>
                     ))}
                   </div>
                 </div>
@@ -162,8 +166,8 @@ export default function Navbar()
               {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
-                  as="a"
-                  href={item.href}
+                  as="button"
+                  onClick={() => handleNavigation(item.href, item.message)}
                   className={classNames(
                     item.current
                       ? "bg-gray-900 text-white"

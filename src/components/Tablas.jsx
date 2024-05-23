@@ -7,8 +7,10 @@ export default function Tablas() {
   useEffect(() => {
     const obtenerDocumentos = async () => {
       const token = localStorage.getItem('token');
+      const message = localStorage.getItem('navMessage');
+
       try {
-        const response = await fetch("http://localhost:8080/documentos/verdocumentos", {
+        const response = await fetch(`http://localhost:8080/documentos/${message}`, {
           method: 'GET',
           headers: {
             'Authorization': `Bearer ${token}`,

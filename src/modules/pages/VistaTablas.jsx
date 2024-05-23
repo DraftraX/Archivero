@@ -10,3 +10,5 @@ export function VistaTablas() {
     </div>
   );
 }
+
+export default VistaTablas;
