@@ -1,5 +1,14 @@
-import React from "react";
+import React from 'react';
+import Navbar from "../../components/Navbar";
+import MultiStepForm from "../../components/MultiStepForm";
 
 export function CrearUsuario() {
-  return <div>CrearUsuario</div>;
+  return (
+    <div>
+      <Navbar />
+      <MultiStepForm />
+    </div>
+  );
 }
+
+export default CrearUsuario;

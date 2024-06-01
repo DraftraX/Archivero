@@ -4,6 +4,8 @@ import "../styles/Tabla.css";
 export default function Tablas() {
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
+  const [subcriterios, setSubcriterios] = useState([]);
+  const [selectedSubcriterio, setSelectedSubcriterio] = useState("");
   const [filters, setFilters] = useState({
     nro: "",
     nombre: "",
@@ -30,6 +32,20 @@ export default function Tablas() {
         console.log(data);
         setDocumentos(data);
         setFilteredDocumentos(data);
+
+        const idcriteriomayor = message.split("/").pop();
+        const subcriteriosResponse = await fetch(`http://localhost:8080/tipocriterio/criteriomayor/${idcriteriomayor}`, {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+        if (!subcriteriosResponse.ok) {
+          throw new Error("Error al obtener subcriterios");
+        }
+        const subcriteriosData = await subcriteriosResponse.json();
+        setSubcriterios(subcriteriosData);
       } catch (error) {
         console.error("Error al obtener documentos:", error);
       }
@@ -50,10 +66,13 @@ export default function Tablas() {
       if (filters.fecha) {
         filtered = filtered.filter(doc => doc.fecha.includes(filters.fecha));
       }
+      if (selectedSubcriterio) {
+        filtered = filtered.filter(doc => doc.tipocriterio === selectedSubcriterio);
+      }
       setFilteredDocumentos(filtered);
     };
     applyFilters();
-  }, [filters, documentos]);
+  }, [filters, documentos, selectedSubcriterio]);
 
   const handleFilterChange = (e) => {
     setFilters({
@@ -62,12 +81,17 @@ export default function Tablas() {
     });
   };
 
+  const handleSubcriterioChange = (e) => {
+    setSelectedSubcriterio(e.target.value);
+  };
+
   const clearFilters = () => {
     setFilters({
       nro: "",
       nombre: "",
       fecha: ""
     });
+    setSelectedSubcriterio("");
   };
 
   useEffect(() => {
@@ -112,6 +136,19 @@ export default function Tablas() {
               value={filters.fecha}
               onChange={handleFilterChange}
             />
+            <select
+              name="subcriterio"
+              value={selectedSubcriterio}
+              onChange={handleSubcriterioChange}
+              className="dropdown"
+            >
+              <option value="">Seleccionar Subcriterio</option>
+              {subcriterios.map(subcriterio => (
+                <option key={subcriterio.mainid} value={subcriterio.criteryname}>
+                  {subcriterio.criteryname}
+                </option>
+              ))}
+            </select>
             <button
               onClick={clearFilters}
               className="button"

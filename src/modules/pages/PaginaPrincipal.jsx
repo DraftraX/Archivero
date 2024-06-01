@@ -18,7 +18,7 @@ export function PaginaPrincipal() {
       <Navbar />
       <div className="content">
         <div className="left-column">
-          <h1 className="title">VIDEO - PORTAL TRANSPARENCIA ESTÁNDAR (PTE)</h1>
+          <h1 className="titulo">VIDEO - PORTAL TRANSPARENCIA ESTÁNDAR (PTE)</h1>
           <iframe
             title="Portal de Transparencia Estándar (PTE)"
             width="400"
@@ -29,7 +29,7 @@ export function PaginaPrincipal() {
           ></iframe>
         </div>
         <div className="center-column">
-          <h1 className="title">¿QUÉ INFORMACIÓN ENCONTRARÁS?</h1>
+          <h1 className="titulo">¿QUÉ INFORMACIÓN ENCONTRARÁS?</h1>
           <ul className="info-list">
             <li>
               <button
@@ -46,7 +46,7 @@ export function PaginaPrincipal() {
           </ul>
         </div>
         <div className="right-column">
-          <h1 className="title">EL DERECHO DE ACCESO A LA INFORMACIÓN PÚBLICA</h1>
+          <h1 className="titulo">EL DERECHO DE ACCESO A LA INFORMACIÓN PÚBLICA</h1>
           <iframe
             title="EL DERECHO DE ACCESO A LA INFORMACIÓN PÚBLICA"
             width="400"

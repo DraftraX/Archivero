@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Username, Password } from "../../components/Input";
 import { Link, useNavigate } from "react-router-dom";
+import Swal from 'sweetalert2';
 import "../../styles/IniciarSesion.css";
 
 export function IniciarSesion() {
@@ -30,14 +31,29 @@ export function IniciarSesion() {
         const token = result.token;
         localStorage.setItem('token', token);
 
-        alert("Inicio de sesión exitoso");
-        navigate('/paginaprincipal');
+        Swal.fire({
+          icon: 'success',
+          title: 'Inicio de sesión exitoso',
+          showConfirmButton: false,
+          timer: 1500
+        });
+
+        navigate('/perfil');
+        
       } else {
-        alert("Error en el inicio de sesión");
-        console.error('Error en el inicio de sesión');
+        Swal.fire({
+          icon: 'error',
+          title: 'Error en el inicio de sesión',
+          text: 'Por favor, verifica tus credenciales e intenta nuevamente.'
+        });
       }
     } catch (error) {
       console.error('Error en el inicio de sesión:', error);
+      Swal.fire({
+        icon: 'error',
+        title: 'Ocurrió un error',
+        text: 'Hubo un problema al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.'
+      });
     }
   };
 
