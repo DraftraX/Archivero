@@ -24,7 +24,7 @@ const Perfil = () => {
                 <p className="text-muted mb-1">Full Stack Developer</p>
                 <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
                 <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/agregar-documento')}>Agregar documento</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/createdocument')}>Agregar documento</button>
                 </div>
                 <div className="d-flex justify-content-center mb-1">
                   <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Crear usuario</button>

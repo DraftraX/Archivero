@@ -14,14 +14,12 @@ export default function Tablas() {
 
   useEffect(() => {
     const obtenerDocumentos = async () => {
-      const token = localStorage.getItem('token');
       const message = localStorage.getItem('navMessage');
 
       try {
         const response = await fetch(`http://localhost:8080/documentos/${message}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -29,15 +27,13 @@ export default function Tablas() {
           throw new Error("El servidor no respondio correctamente");
         }
         const data = await response.json();
-        console.log(data);
         setDocumentos(data);
         setFilteredDocumentos(data);
 
         const idcriteriomayor = message.split("/").pop();
-        const subcriteriosResponse = await fetch(`http://localhost:8080/tipocriterio/criteriomayor/${idcriteriomayor}`, {
+        const subcriteriosResponse = await fetch(`http://localhost:8080/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`, {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         });
@@ -96,7 +92,7 @@ export default function Tablas() {
 
   useEffect(() => {
     const handlePopState = () => {
-      localStorage.setItem('navMessage', "verdocumentos");
+      localStorage.setItem('navMessage', "verdocumento/");
       window.location.reload();
     };
 

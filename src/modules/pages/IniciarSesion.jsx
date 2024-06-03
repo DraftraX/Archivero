@@ -71,7 +71,7 @@ export function IniciarSesion() {
           <h2 className="text-center pb-6">ARCHIVERO CENTRAL</h2>
           <Username value={username} onChange={(e) => setUsername(e.target.value)} />
           <Password value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Link to={"#"}>
+          <Link to={"/restore"}>
             <h3 className="text-end pb-5">¿Olvidaste tu contraseña?</h3>
           </Link>
           <div className="px-4">

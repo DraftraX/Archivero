@@ -7,6 +7,7 @@ import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import { PaginaPrincipal } from "./modules/pages/PaginaPrincipal";
 import { VistaTablas } from "./modules/pages/VistaTablas";
 import { PerfilUsuario } from "./modules/pages/PerfilUsuario"; 
+import { CrearDocumento } from "./modules/pages/CrearDocumento"; 
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -18,9 +19,10 @@ function App() {
           <Route path="/" element={<Navigate to="/panelprincipal" />} />
 
           {/* Rutas protegidas */}
-          <Route path="/register" element={<PrivateRoute><RestablecerContrasena /></PrivateRoute>} />
+          <Route path="/restore" element={<PrivateRoute><RestablecerContrasena /></PrivateRoute>} />
+          <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
           <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
-          <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />  
+          <Route path="/createdocument" element={<PrivateRoute><CrearDocumento/></PrivateRoute>} /> 
 
           {/* demas rutas */}
           <Route path="/login" element={<IniciarSesion />} />
