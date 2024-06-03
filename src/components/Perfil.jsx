@@ -1,10 +1,58 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { useNavigate } from "react-router-dom";
 
 const Perfil = () => {
   const navigate = useNavigate();
+
+  const token = localStorage.getItem('token');
+  console.log (token);
+  let username;
+  if (token) {
+    const tokenParts = token.split('.');
+    const encodedPayload = tokenParts[1];
+    const decodedPayload = atob(encodedPayload);
+    const parsedPayload = JSON.parse(decodedPayload);
+    
+    username = parsedPayload.sub;
+  } else {
+    console.log('No se encontró ningún token en el almacenamiento local.');
+  }
+
+  const [userData, setUserData] = useState({
+    id: '',
+    name: '',
+    lastname: '',
+    address: '',
+    cargoid: ''
+  });
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await fetch(`http://localhost:8080/usuario/verusuarioporusername/${username}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUserData(data);
+        } else {
+          console.error('Error al obtener los datos del usuario');
+        }
+      } catch (error) {
+        console.error('Error al obtener los datos del usuario:', error);
+      }
+    };
+
+    if (username) {
+      fetchUserData();
+    }
+  }, [username, token]);
 
   return (
     <section style={{ backgroundColor: '#eee' }}>
@@ -20,9 +68,9 @@ const Perfil = () => {
                     className="rounded-circle img-fluid avatar" 
                   />
                 </div>
-                <h5 className="my-3">John Smith</h5>
-                <p className="text-muted mb-1">Full Stack Developer</p>
-                <p className="text-muted mb-4">Bay Area, San Francisco, CA</p>
+                <h5 className="my-3">{userData.name}</h5>
+                <p className="text-muted mb-1">{userData.cargoid}</p>
+                <p className="text-muted mb-4">{userData.address}</p>
                 <div className="d-flex justify-content-center mb-1">
                   <button type="button" className="btn btn-secondary" onClick={() => navigate('/createdocument')}>Agregar documento</button>
                 </div>
@@ -37,46 +85,29 @@ const Perfil = () => {
               <div className="card-body">
                 <div className="row">
                   <div className="col-sm-3">
-                    <p className="mb-0">Full Name</p>
+                    <p className="mb-0">Name</p>
                   </div>
                   <div className="col-sm-9">
-                    <p className="text-muted mb-0">Johnatan Smith</p>
+                    <p className="text-muted mb-0">{userData.name}</p>
                   </div>
                 </div>
                 <hr />
                 <div className="row">
                   <div className="col-sm-3">
-                    <p className="mb-0">Email</p>
+                    <p className="mb-0">LastName</p>
                   </div>
                   <div className="col-sm-9">
-                    <p className="text-muted mb-0">example@example.com</p>
+                    <p className="text-muted mb-0">{userData.lastname}</p>
                   </div>
                 </div>
                 <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Phone</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">(097) 234-5678</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Mobile</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">(098) 765-4321</p>
-                  </div>
-                </div>
-                <hr />
+               
                 <div className="row">
                   <div className="col-sm-3">
                     <p className="mb-0">Address</p>
                   </div>
                   <div className="col-sm-9">
-                    <p className="text-muted mb-0">Bay Area, San Francisco, CA</p>
+                    <p className="text-muted mb-0">{userData.address}</p>
                   </div>
                 </div>
               </div>
