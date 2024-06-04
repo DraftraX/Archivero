@@ -14,6 +14,7 @@ const FormularioDocumento = () => {
     duracion: 0,
     vencimiento: '',
     idtipocriterio: 0,
+    pdf: null,
   });
 
   const [criterios, setCriterios] = useState([]);
@@ -42,8 +43,12 @@ const FormularioDocumento = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setRequest({ ...Request, [name]: value });
+    const { name, value, files } = e.target;
+    if (name === 'pdf' && files) {
+      setRequest({ ...Request, pdf: files[0] });
+    } else {
+      setRequest({ ...Request, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -51,20 +56,25 @@ const FormularioDocumento = () => {
 
     const token = localStorage.getItem('token');
 
-    const DocumentosRequest = {
-      ...Request,
-      fecha: Request.fecha.toString(),
-      vencimiento: Request.vencimiento.toString()
-    };
+    const formData = new FormData();
+    formData.append('nrodoc', Request.nrodoc);
+    formData.append('titulo', Request.titulo);
+    formData.append('estado', Request.estado);
+    formData.append('fecha', Request.fecha);
+    formData.append('duracion', Request.duracion);
+    formData.append('vencimiento', Request.vencimiento);
+    formData.append('idtipocriterio', Request.idtipocriterio);
+    if (Request.pdf) {
+      formData.append('pdf', Request.pdf);
+    }
 
     try {
       const response = await fetch('http://localhost:8080/documentos/nuevodocumento', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify(DocumentosRequest),
+        body: formData,
       });
 
       if (response.ok) {
@@ -138,6 +148,12 @@ const FormularioDocumento = () => {
               </option>
             ))}
           </select>
+          <input
+            type="file"
+            name="pdf"
+            accept="application/pdf"
+            onChange={handleChange}
+          />
           <input type="submit" className="submit action-button" value="Submit" />
         </fieldset>
       </form>

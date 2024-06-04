@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/Tabla.css";
 
 export default function Tablas() {
+  const navigate = useNavigate();
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
   const [subcriterios, setSubcriterios] = useState([]);
@@ -11,7 +13,7 @@ export default function Tablas() {
     nombre: "",
     fecha: ""
   });
-
+  
   useEffect(() => {
     const obtenerDocumentos = async () => {
       const message = localStorage.getItem('navMessage');
@@ -103,6 +105,11 @@ export default function Tablas() {
     };
   }, []);
 
+  const handleSaveIdAndRedirect = (id) => {
+    localStorage.setItem('documentId', id);
+    navigate('/verpdf');
+  };
+
   return (
     <div>
       <div className="container mt-5 text-center">
@@ -168,7 +175,11 @@ export default function Tablas() {
                 <td>{documento.nrodoc}</td>
                 <td>{documento.titulo}</td>
                 <td>{documento.fecha}</td>
-                <td>N/A</td>
+                <td>
+                  <button onClick={() => handleSaveIdAndRedirect(documento.nrodoc)}>
+                    Ver PDF
+                  </button>
+                </td>
               </tr>
             ))}
           </tbody>

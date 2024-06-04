@@ -11,7 +11,8 @@ const MultiStepForm = () => {
     address: '',
     email: '',
     pass: '',
-    cpass: ''
+    cpass: '',
+    phone: '',
   });
   const navigate = useNavigate();
 
@@ -24,8 +25,14 @@ const MultiStepForm = () => {
   };
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormValues({ ...formValues, [name]: value });
+    const { name, value, type, files } = e.target;
+  
+    if (type === 'file') {
+      const fotoPerfil = files[0];
+      setFormValues({ ...formValues, fotoPerfil });
+    } else {
+      setFormValues({ ...formValues, [name]: value });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -40,11 +47,14 @@ const MultiStepForm = () => {
       lastname: formValues.lname,
       address: formValues.address,
       cargoid: 1,
+      phone: formValues.phone,
       username: formValues.email,
       password: formValues.pass
     };
 
     const token = localStorage.getItem('token');
+
+    console.log(UsuarioRequest);
 
     try {
       const response = await fetch('http://localhost:8080/usuario/nuevousuario', {
@@ -84,6 +94,7 @@ const MultiStepForm = () => {
             value={formValues.fname} 
             onChange={handleChange} 
           />
+          {/* Agregar campo para el apellido */}
           <input 
             type="text" 
             name="lname" 
@@ -91,11 +102,20 @@ const MultiStepForm = () => {
             value={formValues.lname} 
             onChange={handleChange} 
           />
+          {/* Agregar campo para la dirección */}
           <input 
             type="text" 
             name="address" 
             placeholder="Address" 
             value={formValues.address} 
+            onChange={handleChange} 
+          />
+          {/* Agregar campo para el teléfono */}
+          <input 
+            type="text" 
+            name="phone" 
+            placeholder="Phone" 
+            value={formValues.phone} 
             onChange={handleChange} 
           />
           <input type="button" className="next action-button" value="Next" onClick={nextStep} />
