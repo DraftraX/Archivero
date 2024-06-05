@@ -177,7 +177,7 @@ export default function Tablas() {
                 <td>{documento.fecha}</td>
                 <td>
                   <button onClick={() => handleSaveIdAndRedirect(documento.nrodoc)}>
-                    Ver PDF
+                    Ver
                   </button>
                 </td>
               </tr>
