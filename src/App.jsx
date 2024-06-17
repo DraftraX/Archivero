@@ -9,6 +9,7 @@ import { VistaTablas } from "./modules/pages/VistaTablas";
 import { PerfilUsuario } from "./modules/pages/PerfilUsuario"; 
 import { CrearDocumento } from "./modules/pages/CrearDocumento";
 import { VerDocumento } from "./modules/pages/VerDocumento";
+import { NuevaContrasena } from "./modules/pages/NuevaContrasena";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -20,13 +21,14 @@ function App() {
           <Route path="/" element={<Navigate to="/panelprincipal" />} />
 
           {/* Rutas protegidas */}
-          <Route path="/restore" element={<PrivateRoute><RestablecerContrasena /></PrivateRoute>} />
           <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
           <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
           <Route path="/createdocument" element={<PrivateRoute><CrearDocumento/></PrivateRoute>} />
           
           {/* demas rutas */}
-          <Route path="/login" element={<IniciarSesion />} />
+          <Route path="/login" element={<IniciarSesion />} /> 
+          <Route path="/restore" element={<RestablecerContrasena />} />
+          <Route path="/newpassword" element={<NuevaContrasena />} />
           <Route path="/panelprincipal" element={<PanelPrincipal />} />
           <Route path="/paginaprincipal" element={<PaginaPrincipal />} />
           <Route path="/tablas" element={<VistaTablas />} />
