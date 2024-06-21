@@ -104,10 +104,10 @@ const Perfil = () => {
                 <hr />
                 <div className="row">
                   <div className="col-sm-3">
-                    <p className="mb-0">Phone</p> {/* Agregado campo Phone */}
+                    <p className="mb-0">Phone</p>
                   </div>
                   <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.phone}</p> {/* Utiliza userData.phone para mostrar el teléfono */}
+                    <p className="text-muted mb-0">{userData.phone}</p>
                   </div>
                 </div>
                 <hr />
