@@ -8,6 +8,7 @@ export default function DocumentoDetalle() {
   const [error, setError] = useState(null);
 
   const documentId = localStorage.getItem("documentId");
+  const token = localStorage.getItem('token');
 
   if (!documentId) {
     setError("No se encontró el ID del documento en el localStorage.");
@@ -18,7 +19,13 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}`);
+        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
         if (!response.ok) {
           throw new Error("Error al obtener el documento");
         }
@@ -35,7 +42,13 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}/pdf`);
+        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}/pdf`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+          });
         if (!response.ok) {
           throw new Error("Error al obtener el PDF del documento");
         }
@@ -67,6 +80,7 @@ export default function DocumentoDetalle() {
         <div className="documento-info">
           <p><strong>NRO:</strong> {documento.nrodoc}</p>
           <p><strong>Título:</strong> {documento.titulo}</p>
+          <p><strong>DNI:</strong> {documento.dni}</p>
           <p><strong>Estado:</strong> {documento.estado}</p>
           <p><strong>Fecha:</strong> {documento.fecha}</p>
           <p><strong>Duración:</strong> {documento.duracion}</p>

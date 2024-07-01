@@ -4,16 +4,19 @@ import "../styles/Tabla.css";
 
 export default function Tablas() {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
   const [subcriterios, setSubcriterios] = useState([]);
   const [selectedSubcriterio, setSelectedSubcriterio] = useState("");
   const [filters, setFilters] = useState({
     nro: "",
+    dni: "",
     nombre: "",
     fecha: ""
   });
-  
+
   useEffect(() => {
     const obtenerDocumentos = async () => {
       const message = localStorage.getItem('navMessage');
@@ -23,10 +26,11 @@ export default function Tablas() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
         });
         if (!response.ok) {
-          throw new Error("El servidor no respondio correctamente");
+          throw new Error("El servidor no respondió correctamente");
         }
         const data = await response.json();
         setDocumentos(data);
@@ -37,6 +41,7 @@ export default function Tablas() {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
         });
         if (!subcriteriosResponse.ok) {
@@ -50,25 +55,35 @@ export default function Tablas() {
     };
 
     obtenerDocumentos();
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     const applyFilters = () => {
       let filtered = documentos;
+
       if (filters.nro) {
         filtered = filtered.filter(doc => doc.nrodoc.includes(filters.nro));
       }
+
+      if (filters.dni) {
+        filtered = filtered.filter(doc => doc.dni && doc.dni.includes(filters.dni));  // Asegúrate de que doc.dni no sea null o undefined
+      }
+
       if (filters.nombre) {
         filtered = filtered.filter(doc => doc.titulo.toLowerCase().includes(filters.nombre.toLowerCase()));
       }
+
       if (filters.fecha) {
         filtered = filtered.filter(doc => doc.fecha.includes(filters.fecha));
       }
+
       if (selectedSubcriterio) {
         filtered = filtered.filter(doc => doc.tipocriterio === selectedSubcriterio);
       }
+
       setFilteredDocumentos(filtered);
     };
+
     applyFilters();
   }, [filters, documentos, selectedSubcriterio]);
 
@@ -86,6 +101,7 @@ export default function Tablas() {
   const clearFilters = () => {
     setFilters({
       nro: "",
+      dni: "",
       nombre: "",
       fecha: ""
     });
@@ -127,6 +143,13 @@ export default function Tablas() {
             />
             <input
               type="text"
+              name="dni"
+              placeholder="Filtrar por DNI"
+              value={filters.dni}
+              onChange={handleFilterChange}
+            />
+            <input
+              type="text"
               name="nombre"
               placeholder="Filtrar por Nombre de Documento"
               value={filters.nombre}
@@ -164,7 +187,8 @@ export default function Tablas() {
           <thead>
             <tr>
               <th scope="col">NRO:</th>
-              <th scope="col">Titulo:</th>
+              <th scope="col">DNI:</th>
+              <th scope="col">Título:</th>
               <th scope="col">Fecha:</th>
               <th scope="col">Enlace:</th>
             </tr>
@@ -173,6 +197,7 @@ export default function Tablas() {
             {filteredDocumentos.map((documento) => (
               <tr key={documento.nrodoc}>
                 <td>{documento.nrodoc}</td>
+                <td>{documento.dni}</td>
                 <td>{documento.titulo}</td>
                 <td>{documento.fecha}</td>
                 <td>

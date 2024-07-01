@@ -5,9 +5,11 @@ import { useNavigate } from "react-router-dom";
 
 const FormularioDocumento = () => {
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
 
   const [Request, setRequest] = useState({
     nrodoc: '',
+    dni: '', // Añadido el campo DNI
     titulo: '',
     estado: '',
     fecha: '',
@@ -25,6 +27,7 @@ const FormularioDocumento = () => {
         const response = await fetch('http://localhost:8080/tipocriterio/vercriterio/tipocriterios', {
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
           },
         });
 
@@ -54,10 +57,9 @@ const FormularioDocumento = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
-
     const formData = new FormData();
     formData.append('nrodoc', Request.nrodoc);
+    formData.append('dni', Request.dni);
     formData.append('titulo', Request.titulo);
     formData.append('estado', Request.estado);
     formData.append('fecha', Request.fecha);
@@ -67,7 +69,6 @@ const FormularioDocumento = () => {
     if (Request.pdf) {
       formData.append('pdf', Request.pdf);
     }
-
     try {
       const response = await fetch('http://localhost:8080/documentos/nuevodocumento', {
         method: 'POST',
@@ -99,6 +100,13 @@ const FormularioDocumento = () => {
             name="nrodoc"
             placeholder="Número de Documento"
             value={Request.nrodoc}
+            onChange={handleChange}
+          />
+          <input
+            type="text"
+            name="dni"
+            placeholder="DNI"
+            value={Request.dni}
             onChange={handleChange}
           />
           <input
