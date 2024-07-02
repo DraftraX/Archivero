@@ -62,18 +62,20 @@ const Perfil = () => {
           <div className="col-lg-4">
             <div className="card mb-4">
               <div className="card-body text-center">
-                <div className="image-container">
+                <div className="image-container centered">
                   <img 
-                    src="https://iconos8.es/icon/Hj21JM30swCm/test-account"
+                    src="https://img.icons8.com/?size=100&id=7819&format=png&color=000000"
                     alt="avatar"
                     className="rounded-circle img-fluid avatar" 
                   />
                 </div>
                 <h5 className="my-3">{userData.name}</h5>
                 <p className="text-muted mb-1">{userData.cargoid}</p>
-                <p className="text-muted mb-4">{userData.address}</p>
                 <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/createdocument')}>Agregar documento</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/createresolucion')}>Agregar Resoluciones</button>
+                </div>
+                <div className="d-flex justify-content-center mb-1">
+                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Agregar Grados y Titulos</button>
                 </div>
                 <div className="d-flex justify-content-center mb-1">
                   <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Crear usuario</button>

@@ -5,10 +5,10 @@ import { RestablecerContrasena } from "./modules/pages/RestablecerContrasena";
 import { CrearUsuario } from "./modules/pages/CrearUsuario";
 import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import { PaginaPrincipal } from "./modules/pages/PaginaPrincipal";
-import { VistaTablas } from "./modules/pages/VistaTablas";
+import { VistaResoluciones } from "./modules/pages/VistaResoluciones";
 import { PerfilUsuario } from "./modules/pages/PerfilUsuario"; 
-import { CrearDocumento } from "./modules/pages/CrearDocumento";
-import { VerDocumento } from "./modules/pages/VerDocumento";
+import { CrearResolucion } from "./modules/pages/CrearResolucion";
+import { VerResolucion } from "./modules/pages/VerResolucion";
 import { NuevaContrasena } from "./modules/pages/NuevaContrasena";
 import PrivateRoute from "./components/PrivateRoute";
 
@@ -22,11 +22,11 @@ function App() {
 
           {/* Rutas protegidas */}
           <Route path="/paginaprincipal" element={<PrivateRoute><PaginaPrincipal /></PrivateRoute>} />
-          <Route path="/tablas" element={<PrivateRoute><VistaTablas /></PrivateRoute>} />
-          <Route path="/verpdf" element={<PrivateRoute><VerDocumento /></PrivateRoute>} />
+          <Route path="/resoluciones" element={<PrivateRoute><VistaResoluciones /></PrivateRoute>} />
+          <Route path="/verresolucion" element={<PrivateRoute><VerResolucion /></PrivateRoute>} />
           <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
           <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
-          <Route path="/createdocument" element={<PrivateRoute><CrearDocumento/></PrivateRoute>} />
+          <Route path="/createresolucion" element={<PrivateRoute><CrearResolucion/></PrivateRoute>} />
           
           {/* demas rutas */}
           <Route path="/login" element={<IniciarSesion />} /> 

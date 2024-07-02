@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "../../components/Navbar"; 
 import Tablas from "../../components/Tablas";
 
-export function VistaTablas() {
+export function VistaGrados() {
   return (
     <div>
       <Navbar />
@@ -11,4 +11,4 @@ export function VistaTablas() {
   );
 }
 
-export default VistaTablas;
+export default VistaGrados;

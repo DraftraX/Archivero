@@ -1,15 +1,14 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const navigation = [
-  { name: "Archivos de Gestion", href: "/tablas", message: "verdocumento/criteriomayor/1", current: false },
-  { name: "Oficinas Academicas", href: "/tablas", message: "verdocumento/criteriomayor/2", current: false },
-  { name: "Vicerrectoria de Investigacion", href: "/tablas", message: "verdocumento/criteriomayor/3", current: false },
-  { name: "Oficinas Administrativas", href: "/tablas", message: "verdocumento/criteriomayor/4", current: false },
-  { name: "Archivos Externos", href: "/tablas", message: "verdocumento/criteriomayor/5", current: false },
+  { name: "Archivos de Gestion", href: "/resoluciones", message: "verresolucion/criteriomayor/1", current: false },
+  { name: "Oficinas Academicas", href: "/resoluciones", message: "verresolucion/criteriomayor/2", current: false },
+  { name: "Vicerrectoria de Investigacion", href: "/resoluciones", message: "verresolucion/criteriomayor/3", current: false },
+  { name: "Oficinas Administrativas", href: "/resoluciones", message: "verresolucion/criteriomayor/4", current: false },
+  { name: "Archivos Externos", href: "/resoluciones", message: "verresolucion/criteriomayor/5", current: false },
 ];
 
 function classNames(...classes) {
@@ -23,7 +22,7 @@ export default function Navbar() {
   const handleNavigation = (href, message) => {
     localStorage.setItem('navMessage', message);
     navigate(href);
-    if (href === "/tablas") {
+    if (href === "/resoluciones") {
       window.location.reload();
     }
   };
@@ -92,13 +91,13 @@ export default function Navbar() {
                   {/* Profile dropdown */}
                   <Menu as="div" className="relative ml-3">
                     <div>
-                      <Menu.Button className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
+                      <Menu.Button className="relative flex rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
                         <span className="absolute -inset-1.5" />
                         <span className="sr-only">Open user menu</span>
                         <img
                           className="h-8 w-8 rounded-full"
-                          src="https://media-lim1-1.cdn.whatsapp.net/v/t61.24694-24/431456529_1474737929807753_3430680412980144425_n.jpg?ccb=11-4&oh=01_Q5AaIAjcBajM6uNcoDs_y97yVBWQ5DISS4sznIbmuzyDmJbm&oe=66562317&_nc_sid=e6ed6c&_nc_cat=111"
-                          alt=""
+                          src="https://img.icons8.com/?size=100&id=7819&format=png&color=000000"
+                          alt="avatar"
                         />
                       </Menu.Button>
                     </div>

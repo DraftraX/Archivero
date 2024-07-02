@@ -33,10 +33,18 @@ export function PaginaPrincipal() {
           <ul className="info-list">
             <li>
               <button
-                onClick={() => handleNavigation("/tablas", "verdocumento/")}
+                onClick={() => handleNavigation("/resoluciones", "verdocumento/")}
                 className="button"
               >
-                Archivos Generales
+                Resoluciones
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => handleNavigation("/resoluciones", "verdocumento/")}
+                className="button"
+              >
+                Grados y Titulos
               </button>
             </li>
             <li>Planeamiento y organización</li>

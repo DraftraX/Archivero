@@ -9,12 +9,11 @@ const FormularioDocumento = () => {
 
   const [Request, setRequest] = useState({
     nrodoc: '',
-    dni: '', // Añadido el campo DNI
     titulo: '',
     estado: '',
     fecha: '',
     duracion: 0,
-    vencimiento: '',
+    tipoResolucion: '',
     idtipocriterio: 0,
     pdf: null,
   });
@@ -46,31 +45,54 @@ const FormularioDocumento = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, files } = e.target;
+    const { name, value, files, type, checked } = e.target;
     if (name === 'pdf' && files) {
       setRequest({ ...Request, pdf: files[0] });
+    } else if (type === 'checkbox') {
+      setRequest({ ...Request, [name]: checked ? value : '' });
     } else {
       setRequest({ ...Request, [name]: value });
     }
   };
 
+  const validateForm = () => {
+    const { nrodoc, titulo, estado, fecha, tipoResolucion, idtipocriterio, duracion } = Request;
+
+    if (!nrodoc || !titulo || !estado || !fecha || !tipoResolucion || !idtipocriterio) {
+      Swal.fire("Todos los campos son obligatorios", "", "error");
+      return false;
+    }
+
+    if (tipoResolucion === 'Temporal' && (duracion <= 0 || duracion === '')) {
+      Swal.fire("La duración debe ser mayor a 0 cuando la resolución es temporal", "", "error");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!validateForm()) {
+      return;
+    }
+
     const formData = new FormData();
     formData.append('nrodoc', Request.nrodoc);
-    formData.append('dni', Request.dni);
     formData.append('titulo', Request.titulo);
     formData.append('estado', Request.estado);
     formData.append('fecha', Request.fecha);
-    formData.append('duracion', Request.duracion);
-    formData.append('vencimiento', Request.vencimiento);
+    formData.append('tipoResolucion', Request.tipoResolucion);
+    if (Request.tipoResolucion === 'Temporal') {
+      formData.append('duracion', Request.duracion);
+    }
     formData.append('idtipocriterio', Request.idtipocriterio);
     if (Request.pdf) {
       formData.append('pdf', Request.pdf);
     }
     try {
-      const response = await fetch('http://localhost:8080/documentos/nuevodocumento', {
+      const response = await fetch('http://localhost:8080/resolucion/nuevaresolucion', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -104,13 +126,6 @@ const FormularioDocumento = () => {
           />
           <input
             type="text"
-            name="dni"
-            placeholder="DNI"
-            value={Request.dni}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
             name="titulo"
             placeholder="Título"
             value={Request.titulo}
@@ -130,20 +145,37 @@ const FormularioDocumento = () => {
             value={Request.fecha}
             onChange={handleChange}
           />
-          <input
-            type="number"
-            name="duracion"
-            placeholder="Duración (días)"
-            value={Request.duracion}
-            onChange={handleChange}
-          />
-          <input
-            type="date"
-            name="vencimiento"
-            placeholder="Fecha de Vencimiento"
-            value={Request.vencimiento}
-            onChange={handleChange}
-          />
+          <div>
+            <label>
+              <input
+                type="checkbox"
+                name="tipoResolucion"
+                value="Permanente"
+                checked={Request.tipoResolucion === 'Permanente'}
+                onChange={handleChange}
+              />
+              Permanente
+            </label>
+            <label>
+              <input
+                type="checkbox"
+                name="tipoResolucion"
+                value="Temporal"
+                checked={Request.tipoResolucion === 'Temporal'}
+                onChange={handleChange}
+              />
+              Temporal
+            </label>
+          </div>
+          {Request.tipoResolucion === 'Temporal' && (
+            <input
+              type="number"
+              name="duracion"
+              placeholder="Duración (años)"
+              value={Request.duracion}
+              onChange={handleChange}
+            />
+          )}
           <select
             name="idtipocriterio"
             value={Request.idtipocriterio}

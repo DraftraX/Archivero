@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from "../../components/Navbar";
 import Documento from "../../components/Documento";
 
-export function VerDocumento() {
+export function VerResolucion() {
   return (
     <div>
       <Navbar />
@@ -11,4 +11,4 @@ export function VerDocumento() {
   );
 }
 
-export default VerDocumento;
+export default VerResolucion;

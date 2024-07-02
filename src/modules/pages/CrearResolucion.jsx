@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from "../../components/Navbar";
 import FormularioDocumento from "../../components/FormularioDocumento";
 
-export function CrearDocumento() {
+export function CrearResolucion() {
   return (
     <div>
       <Navbar />
@@ -11,4 +11,4 @@ export function CrearDocumento() {
   );
 }
 
-export default CrearDocumento;
+export default CrearResolucion;

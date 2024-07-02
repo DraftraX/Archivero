@@ -17,7 +17,11 @@ const MultiStepForm = () => {
   const navigate = useNavigate();
 
   const nextStep = () => {
-    setStep(step + 1);
+    if (step === 1 && validateStep1()) {
+      setStep(step + 1);
+    } else if (step === 2 && validateStep2()) {
+      setStep(step + 1);
+    }
   };
 
   const prevStep = () => {
@@ -26,7 +30,7 @@ const MultiStepForm = () => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-  
+
     if (type === 'file') {
       const fotoPerfil = files[0];
       setFormValues({ ...formValues, fotoPerfil });
@@ -35,46 +39,70 @@ const MultiStepForm = () => {
     }
   };
 
+  const validateStep1 = () => {
+    const { fname, lname, address, phone } = formValues;
+    if (!fname || !lname || !address || !phone) {
+      Swal.fire('Error', 'Todos los campos son obligatorios en Detalles Personales', 'error');
+      return false;
+    }
+    return true;
+  };
+
+  const validateStep2 = () => {
+    const { email, pass, cpass } = formValues;
+    if (!email || !pass || !cpass) {
+      Swal.fire('Error', 'Todos los campos son obligatorios en Crear tu cuenta', 'error');
+      return false;
+    }
+    if (pass !== cpass) {
+      Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+      return false;
+    }
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(pass)) {
+      Swal.fire('Error', 'La contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial', 'error');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formValues.pass !== formValues.cpass) {
-      Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
-      return;
-    }
+    if (validateStep2()) {
+      const UsuarioRequest = {
+        name: formValues.fname,
+        lastname: formValues.lname,
+        address: formValues.address,
+        cargoid: 1,
+        phone: formValues.phone,
+        username: formValues.email,
+        password: formValues.pass
+      };
 
-    const UsuarioRequest = {
-      name: formValues.fname,
-      lastname: formValues.lname,
-      address: formValues.address,
-      cargoid: 1,
-      phone: formValues.phone,
-      username: formValues.email,
-      password: formValues.pass
-    };
+      const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem('token');
+      console.log(UsuarioRequest);
 
-    console.log(UsuarioRequest);
+      try {
+        const response = await fetch('http://localhost:8080/usuario/nuevousuario', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(UsuarioRequest)
+        });
 
-    try {
-      const response = await fetch('http://localhost:8080/usuario/nuevousuario', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(UsuarioRequest)
-      });
-
-      if (response.ok) {
-        Swal.fire('¡Usuario creado con éxito!', '', 'success');
-        navigate('/perfil');
-      } else {
+        if (response.ok) {
+          Swal.fire('¡Usuario creado con éxito!', '', 'success');
+          navigate('/perfil');
+        } else {
+          Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
+        }
+      } catch (error) {
         Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
+        console.error('Error al crear el usuario:', error);
       }
-    } catch (error) {
-      Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
-      console.error('Error al crear el usuario:', error);
     }
   };
 
@@ -94,7 +122,6 @@ const MultiStepForm = () => {
             value={formValues.fname} 
             onChange={handleChange} 
           />
-          {/* Agregar campo para el apellido */}
           <input 
             type="text" 
             name="lname" 
@@ -102,7 +129,6 @@ const MultiStepForm = () => {
             value={formValues.lname} 
             onChange={handleChange} 
           />
-          {/* Agregar campo para la dirección */}
           <input 
             type="text" 
             name="address" 
@@ -110,7 +136,6 @@ const MultiStepForm = () => {
             value={formValues.address} 
             onChange={handleChange} 
           />
-          {/* Agregar campo para el teléfono */}
           <input 
             type="text" 
             name="phone" 

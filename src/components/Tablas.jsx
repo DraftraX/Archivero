@@ -12,7 +12,6 @@ export default function Tablas() {
   const [selectedSubcriterio, setSelectedSubcriterio] = useState("");
   const [filters, setFilters] = useState({
     nro: "",
-    dni: "",
     nombre: "",
     fecha: ""
   });
@@ -22,7 +21,7 @@ export default function Tablas() {
       const message = localStorage.getItem('navMessage');
 
       try {
-        const response = await fetch(`http://localhost:8080/documentos/${message}`, {
+        const response = await fetch(`http://localhost:8080/resolucion/${message}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -65,10 +64,6 @@ export default function Tablas() {
         filtered = filtered.filter(doc => doc.nrodoc.includes(filters.nro));
       }
 
-      if (filters.dni) {
-        filtered = filtered.filter(doc => doc.dni && doc.dni.includes(filters.dni));  // Asegúrate de que doc.dni no sea null o undefined
-      }
-
       if (filters.nombre) {
         filtered = filtered.filter(doc => doc.titulo.toLowerCase().includes(filters.nombre.toLowerCase()));
       }
@@ -101,7 +96,6 @@ export default function Tablas() {
   const clearFilters = () => {
     setFilters({
       nro: "",
-      dni: "",
       nombre: "",
       fecha: ""
     });
@@ -110,7 +104,7 @@ export default function Tablas() {
 
   useEffect(() => {
     const handlePopState = () => {
-      localStorage.setItem('navMessage', "verdocumento/");
+      localStorage.setItem('navMessage', "verresolucion/");
       window.location.reload();
     };
 
@@ -123,7 +117,7 @@ export default function Tablas() {
 
   const handleSaveIdAndRedirect = (id) => {
     localStorage.setItem('documentId', id);
-    navigate('/verpdf');
+    navigate('/verresolucion');
   };
 
   return (
@@ -139,13 +133,6 @@ export default function Tablas() {
               name="nro"
               placeholder="Filtrar por NRO"
               value={filters.nro}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="dni"
-              placeholder="Filtrar por DNI"
-              value={filters.dni}
               onChange={handleFilterChange}
             />
             <input
@@ -187,7 +174,6 @@ export default function Tablas() {
           <thead>
             <tr>
               <th scope="col">NRO:</th>
-              <th scope="col">DNI:</th>
               <th scope="col">Título:</th>
               <th scope="col">Fecha:</th>
               <th scope="col">Enlace:</th>
@@ -197,7 +183,6 @@ export default function Tablas() {
             {filteredDocumentos.map((documento) => (
               <tr key={documento.nrodoc}>
                 <td>{documento.nrodoc}</td>
-                <td>{documento.dni}</td>
                 <td>{documento.titulo}</td>
                 <td>{documento.fecha}</td>
                 <td>

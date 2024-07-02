@@ -19,7 +19,7 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}`,
+        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/documentos/verdocumento/${documentId}/pdf`,
+        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}/pdf`,
           {
             headers: {
               'Content-Type': 'application/json',
