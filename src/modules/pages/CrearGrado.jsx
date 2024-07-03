@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from "../../components/Navbar";
-import FormularioDocumento from "../../components/FormularioDocumento";
+import FormularioDocumento from "../../components/FormularioGrado";
 
 export function CrearGrado() {
   return (

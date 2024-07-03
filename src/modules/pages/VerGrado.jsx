@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from "../../components/Navbar";
-import Documento from "../../components/Documento";
+import Documento from "../../components/DocumentoGrado";
 
 export function VerGrado() {
   return (

@@ -41,7 +41,7 @@ export function PaginaPrincipal() {
             </li>
             <li>
               <button
-                onClick={() => handleNavigation("/resoluciones", "verdocumento/")}
+                onClick={() => handleNavigation("/grados")}
                 className="button"
               >
                 Grados y Titulos
