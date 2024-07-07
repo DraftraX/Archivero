@@ -13,19 +13,18 @@ export default function DocumentoDetalle() {
   if (!documentId) {
     setError("No se encontró el ID del documento en el localStorage.");
     setLoading(false);
-    return;
+    return <div>Error: {error}</div>;
   }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
-          });
+        const response = await fetch(`http://localhost:8080/gradotitulos/vergradotitulo/${documentId}`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Error al obtener el documento");
         }
@@ -37,18 +36,17 @@ export default function DocumentoDetalle() {
     };
 
     fetchData();
-  }, []);
+  }, [documentId, token]);
 
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}/pdf`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
-            },
-          });
+        const response = await fetch(`http://localhost:8080/gradotitulos/vergradotitulo/${documentId}/pdf`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("Error al obtener el PDF del documento");
         }
@@ -63,7 +61,7 @@ export default function DocumentoDetalle() {
     };
 
     fetchPdf();
-  }, [documentId]);
+  }, [documentId, token]);
 
   if (loading) {
     return <div>Cargando...</div>;
@@ -78,18 +76,19 @@ export default function DocumentoDetalle() {
       <h1>Detalle del Documento</h1>
       {documento && (
         <div className="documento-info">
-          <p><strong>NRO:</strong> {documento.nrodoc}</p>
-          <p><strong>Título:</strong> {documento.titulo}</p>
-          <p><strong>Estado:</strong> {documento.estado}</p>
-          <p><strong>Fecha:</strong> {documento.fecha}</p>
-          <p><strong>Duración:</strong> {documento.duracion}</p>
-          <p><strong>Vencimiento:</strong> {documento.vencimiento}</p>
-          <p><strong>Tipo de Criterio:</strong> {documento.tipocriterio}</p>
+          <p><strong>Nombre y Apellido:</strong> {documento.nombreapellido}</p>
+          <p><strong>DNI:</strong> {documento.dni}</p>
+          <p><strong>Fecha de Expedición:</strong> {documento.fechaexpedicion}</p>
+          <p><strong>Facultad o Escuela:</strong> {documento.facultadescuela}</p>
+          <p><strong>Grado o Título:</strong> {documento.gradotitulo}</p>
+          <p><strong>ID de Resolución:</strong> {documento.idresolucion}</p>
         </div>
       )}
       <div className="pdf-viewer">
-        {pdfUrl && (
+        {pdfUrl ? (
           <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
+        ) : (
+          <p>No se pudo cargar el PDF.</p>
         )}
       </div>
     </div>

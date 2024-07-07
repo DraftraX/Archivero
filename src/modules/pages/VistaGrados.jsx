@@ -1,6 +1,6 @@
 import React from "react";
 import Navbar from "../../components/Navbar"; 
-import Tablas from "../../components/Tablas";
+import Tablas from "../../components/TablaGrado";
 
 export function VistaGrados() {
   return (

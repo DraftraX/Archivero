@@ -75,7 +75,7 @@ const Perfil = () => {
                   <button type="button" className="btn btn-secondary" onClick={() => navigate('/createresolucion')}>Agregar Resoluciones</button>
                 </div>
                 <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Agregar Grados y Titulos</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/creategrado')}>Agregar Grados y Titulos</button>
                 </div>
                 <div className="d-flex justify-content-center mb-1">
                   <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Crear usuario</button>
