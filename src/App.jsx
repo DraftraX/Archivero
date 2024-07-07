@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { IniciarSesion } from "./modules/pages/IniciarSesion";
 import { RestablecerContrasena } from "./modules/pages/RestablecerContrasena";
@@ -16,6 +16,18 @@ import { CrearGrado } from "./modules/pages/CrearGrado";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
+  useEffect(() => {
+    // Verificar si es la primera vez que se inicia la aplicación en el entorno de desarrollo
+    if (process.env.NODE_ENV === 'development') {
+      const isFirstTime = localStorage.getItem('isFirstTime');
+      if (!isFirstTime) {
+        // Limpiar el localStorage y establecer la bandera
+        localStorage.clear();
+        localStorage.setItem('isFirstTime', 'true');
+      }
+    }
+  }, []);
+
   return (
     <BrowserRouter>
       <div>

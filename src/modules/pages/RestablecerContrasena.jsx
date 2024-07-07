@@ -1,10 +1,44 @@
-import React from "react";
+import React, { useState } from "react";
+import Swal from 'sweetalert2';
 import '../../styles/ForgotPassword.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-export function RestablecerContrasena()
-{
+export function RestablecerContrasena() {
+  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const requestBody = {
+      mailTo: email,
+      username: username,
+    };
+
+    const response = await fetch('http://localhost:8080/change-password/enviarcorreo', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestBody)
+    });
+
+    if (response.ok) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Correo enviado',
+        text: 'Correo enviado con éxito.',
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error al enviar el correo.',
+      });
+    }
+  };
+
   return (
     <div className="vertical-layout 1-column navbar-sticky bg-full-screen-image footer-static blank-page light-layout centered">
       <div className="app-content content">
@@ -27,11 +61,33 @@ export function RestablecerContrasena()
                           <div className="text-muted text-center mb-2">
                             <small>Ingrese el correo electrónico con el cual te registraste</small>
                           </div>
-                          <form className="mb-2" method="POST" action="/password/email">
-                            <input type="hidden" name="_token" value="ezJFlViWvl32MiTep9EMLUI5xP7q5fvHoHxd7ZSu" />
+                          <form className="mb-2" onSubmit={handleSubmit}>
                             <div className="form-group mb-2">
                               <label className="text-bold-600" htmlFor="email">Correo electrónico</label>
-                              <input id="email" type="email" className="form-control" name="email" autoComplete="email" autoFocus placeholder="Email" />
+                              <input 
+                                id="email" 
+                                type="email" 
+                                className="form-control" 
+                                name="email" 
+                                autoComplete="email" 
+                                autoFocus 
+                                placeholder="Email" 
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                              />
+                            </div>
+                            <div className="form-group mb-2">
+                              <label className="text-bold-600" htmlFor="username">Nombre de usuario</label>
+                              <input 
+                                id="username" 
+                                type="text" 
+                                className="form-control" 
+                                name="username" 
+                                autoComplete="username" 
+                                placeholder="Nombre de usuario" 
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                              />
                             </div>
                             <button type="submit" className="btn btn-primary glow position-relative" style={{ fontSize: '0.775rem' }}>
                               RECUPERAR MI CONTRASEÑA

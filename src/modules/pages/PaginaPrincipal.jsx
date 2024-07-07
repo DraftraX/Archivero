@@ -8,7 +8,7 @@ export function PaginaPrincipal() {
   const handleNavigation = (href, message) => {
     localStorage.setItem('navMessage', message);
     navigate(href);
-    if (href === "/tablas") {
+    if (href === "/resoluciones") {
       window.location.reload();
     }
   };
@@ -33,7 +33,7 @@ export function PaginaPrincipal() {
           <ul className="info-list">
             <li>
               <button
-                onClick={() => handleNavigation("/resoluciones", "verdocumento/")}
+                onClick={() => handleNavigation("/resoluciones", "verresolucion/")}
                 className="button"
               >
                 Resoluciones
