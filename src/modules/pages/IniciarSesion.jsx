@@ -1,86 +1,159 @@
 import React, { useState } from "react";
-import { Username, Password } from "../../components/Input";
+import { Form, Input, Button, Card, Row, Col, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import Swal from 'sweetalert2';
-import "../../styles/IniciarSesion.css";
+import axios from "axios";
+import { z } from "zod";
+
+const loginSchema = z.object({
+  username: z
+    .string()
+    .email("Debe ingresar un correo válido")
+    .min(1, "Ingrese su Usuario"),
+
+  password: z.string().min(1, "Ingrese su contraseña"),
+});
 
 export function IniciarSesion() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleChangeUsername = (value) => {
+    setUsername(value);
+    if (errors.username) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        username: null,
+      }));
+    }
+  };
 
-    const loginRequest = {
-      username,
-      password,
-    };
+  const handleChangePassword = (value) => {
+    setPassword(value);
+    if (errors.password) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        password: null,
+      }));
+    }
+  };
 
+  const handleSubmit = async (values) => {
     try {
-      const response = await fetch("http://localhost:8080/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(loginRequest),
+      loginSchema.parse(values); // Validate using zod schema
+      setErrors({}); // Clear any previous errors
+
+      const response = await axios.post("http://localhost:8080/auth/login", {
+        username: values.username,
+        password: values.password,
       });
 
-      if (response.ok) {
-        const result = await response.json();
-        const token = result.token;
-        localStorage.setItem('token', token);
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Inicio de sesión exitoso',
-          showConfirmButton: false,
-          timer: 1500
-        });
-
-        navigate('/perfil');
-        
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+        message.success("Inicio de sesión exitoso");
+        navigate("/perfil");
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Error en el inicio de sesión',
-          text: 'Por favor, verifica tus credenciales e intenta nuevamente.'
-        });
+        message.error("Credenciales incorrectas");
       }
     } catch (error) {
-      console.error('Error en el inicio de sesión:', error);
-      Swal.fire({
-        icon: 'error',
-        title: 'Ocurrió un error',
-        text: 'Hubo un problema al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde.'
-      });
+      if (error instanceof z.ZodError) {
+        const formattedErrors = {};
+        error.errors.forEach((err) => {
+          formattedErrors[err.path[0]] = err.message;
+        });
+        setErrors(formattedErrors);
+      } else if (axios.isAxiosError(error)) {
+        console.error("Error en la solicitud:", error);
+        message.error(
+          "Hubo un problema al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
+        );
+      } else {
+        console.error("Error en el inicio de sesión:", error);
+        message.error(
+          "Hubo un problema desconocido al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
+        );
+      }
     }
   };
 
   return (
-    <form className="Login bg-green-400" onSubmit={handleSubmit}>
-      <div className="formato grid grid-cols-2 bg-gray-100 mx-20">
-        <div className="h-full">
-          <img
-            className="h-full"
-            src="https://unsm.edu.pe/wp-content/uploads/2018/05/archivero-unsm-2018.jpg"
-            alt="Archivero UNSM"
-          />
-        </div>
-        <div className="form">
-          <h2 className="text-center pb-6">ARCHIVERO CENTRAL</h2>
-          <Username value={username} onChange={(e) => setUsername(e.target.value)} />
-          <Password value={password} onChange={(e) => setPassword(e.target.value)} />
-          <Link to={"/restore"}>
-            <h3 className="text-end pb-5">¿Olvidaste tu contraseña?</h3>
-          </Link>
-          <div className="px-4">
-            <button className="boton bg-green-400 p-5" type="submit">
-              Iniciar Sesión
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
+    <div className="min-h-screen flex items-center justify-center bg-green-500">
+      <Row justify="center" className="w-full">
+        <Col xl={8} lg={10} md={12} sm={20} xs={24}>
+          <Card className="bg-white shadow-md rounded-lg overflow-hidden lg:flex lg:max-w-4xl">
+            <div className="lg:flex-1">
+              <img
+                className="h-full object-cover w-full lg:h-auto"
+                src="https://unsm.edu.pe/wp-content/uploads/2018/05/archivero-unsm-2018.jpg"
+                alt="Archivero UNSM"
+              />
+            </div>
+            <div className="p-8 lg:flex-1 lg:p-12">
+              <h2 className="text-2xl font-bold text-center text-gray-700">
+                ARCHIVERO CENTRAL
+              </h2>
+              <Form onFinish={handleSubmit} layout="vertical" className="mt-6">
+                <Form.Item
+                  label="Usuario"
+                  name="username"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Por favor ingresa tu correo electrónico",
+                    },
+                  ]}
+                >
+                  <Input
+                    type="email"
+                    placeholder="Ingrese su usuario"
+                    onChange={(e) => handleChangeUsername(e.target.value)}
+                  />
+                  {errors.username && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.username}
+                    </p>
+                  )}
+                </Form.Item>
+                <Form.Item
+                  label="Contraseña"
+                  name="password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Por favor ingresa tu contraseña",
+                    },
+                  ]}
+                >
+                  <Input.Password
+                    placeholder="Ingrese su contraseña"
+                    onChange={(e) => handleChangePassword(e.target.value)}
+                  />
+                  {errors.password && (
+                    <p className="text-red-500 text-xs italic">
+                      {errors.password}
+                    </p>
+                  )}
+                </Form.Item>
+                <Form.Item>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="w-full bg-green-500 hover:bg-green-600"
+                  >
+                    Iniciar Sesión
+                  </Button>
+                </Form.Item>
+              </Form>
+              <div className="mt-4 text-center">
+                <Link to={"/restore"} className="hover:text-green-500">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
 }

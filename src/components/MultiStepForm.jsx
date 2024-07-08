@@ -1,26 +1,24 @@
-import React, { useState } from 'react';
-import '../styles/MultiStepForm.css';
-import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Form, Input, Button, Steps, message } from "antd";
+import { useNavigate } from "react-router-dom";
+
+const { Step } = Steps;
 
 const MultiStepForm = () => {
-  const [step, setStep] = useState(1);
-  const [formValues, setFormValues] = useState({
-    fname: '',
-    lname: '',
-    address: '',
-    email: '',
-    pass: '',
-    cpass: '',
-    phone: '',
-  });
+  const [step, setStep] = useState(0);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
 
-  const nextStep = () => {
-    if (step === 1 && validateStep1()) {
+  const nextStep = async () => {
+    try {
+      if (step === 0) {
+        await form.validateFields(["fname", "lname", "address", "phone"]);
+      } else if (step === 1) {
+        await form.validateFields(["email", "pass", "cpass"]);
+      }
       setStep(step + 1);
-    } else if (step === 2 && validateStep2()) {
-      setStep(step + 1);
+    } catch (error) {
+      // Handle validation error
     }
   };
 
@@ -28,150 +26,192 @@ const MultiStepForm = () => {
     setStep(step - 1);
   };
 
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
+  const handleFinish = async (values) => {
+    const { fname, lname, address, phone, email, pass } = values;
+    const UsuarioRequest = {
+      name: fname,
+      lastname: lname,
+      address,
+      cargoid: 1,
+      phone,
+      username: email,
+      password: pass,
+    };
 
-    if (type === 'file') {
-      const fotoPerfil = files[0];
-      setFormValues({ ...formValues, fotoPerfil });
-    } else {
-      setFormValues({ ...formValues, [name]: value });
-    }
-  };
+    const token = localStorage.getItem("token");
 
-  const validateStep1 = () => {
-    const { fname, lname, address, phone } = formValues;
-    if (!fname || !lname || !address || !phone) {
-      Swal.fire('Error', 'Todos los campos son obligatorios en Detalles Personales', 'error');
-      return false;
-    }
-    return true;
-  };
-
-  const validateStep2 = () => {
-    const { email, pass, cpass } = formValues;
-    if (!email || !pass || !cpass) {
-      Swal.fire('Error', 'Todos los campos son obligatorios en Crear tu cuenta', 'error');
-      return false;
-    }
-    if (pass !== cpass) {
-      Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
-      return false;
-    }
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(pass)) {
-      Swal.fire('Error', 'La contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial', 'error');
-      return false;
-    }
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (validateStep2()) {
-      const UsuarioRequest = {
-        name: formValues.fname,
-        lastname: formValues.lname,
-        address: formValues.address,
-        cargoid: 1,
-        phone: formValues.phone,
-        username: formValues.email,
-        password: formValues.pass
-      };
-
-      const token = localStorage.getItem('token');
-
-      console.log(UsuarioRequest);
-
-      try {
-        const response = await fetch('http://localhost:8080/usuario/nuevousuario', {
-          method: 'POST',
+    try {
+      const response = await fetch(
+        "http://localhost:8080/usuario/nuevousuario",
+        {
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(UsuarioRequest)
-        });
-
-        if (response.ok) {
-          Swal.fire('¡Usuario creado con éxito!', '', 'success');
-          navigate('/perfil');
-        } else {
-          Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
+          body: JSON.stringify(UsuarioRequest),
         }
-      } catch (error) {
-        Swal.fire('Error', 'Hubo un problema al crear el usuario', 'error');
-        console.error('Error al crear el usuario:', error);
+      );
+
+      if (response.ok) {
+        message.success("¡Usuario creado con éxito!");
+        navigate("/perfil");
+      } else {
+        message.error("Hubo un problema al crear el usuario");
       }
+    } catch (error) {
+      message.error("Hubo un problema al crear el usuario");
+      console.error("Error al crear el usuario:", error);
     }
   };
 
   return (
-    <div>
-      <form id="msform" onSubmit={handleSubmit}>
-        <ul id="progressbar">
-          <li className={step === 1 ? 'active' : ''}>Detalles Personales</li>
-          <li className={step === 2 ? 'active' : ''}>Crear tu cuenta</li>
-        </ul>
-        <fieldset style={{ display: step === 1 ? 'block' : 'none' }}>
-          <h2 className="fs-title">Detalles Personales</h2>
-          <input 
-            type="text" 
-            name="fname" 
-            placeholder="First Name" 
-            value={formValues.fname} 
-            onChange={handleChange} 
-          />
-          <input 
-            type="text" 
-            name="lname" 
-            placeholder="Last Name" 
-            value={formValues.lname} 
-            onChange={handleChange} 
-          />
-          <input 
-            type="text" 
-            name="address" 
-            placeholder="Address" 
-            value={formValues.address} 
-            onChange={handleChange} 
-          />
-          <input 
-            type="text" 
-            name="phone" 
-            placeholder="Phone" 
-            value={formValues.phone} 
-            onChange={handleChange} 
-          />
-          <input type="button" className="next action-button" value="Next" onClick={nextStep} />
-        </fieldset>
-        <fieldset style={{ display: step === 2 ? 'block' : 'none' }}>
-          <h2 className="fs-title">Crear tu cuenta</h2>
-          <input 
-            type="text" 
-            name="email" 
-            placeholder="Email" 
-            value={formValues.email} 
-            onChange={handleChange} 
-          />
-          <input 
-            type="password" 
-            name="pass" 
-            placeholder="Password" 
-            value={formValues.pass} 
-            onChange={handleChange} 
-          />
-          <input 
-            type="password" 
-            name="cpass" 
-            placeholder="Confirm Password" 
-            value={formValues.cpass} 
-            onChange={handleChange} 
-          />
-          <input type="button" className="previous action-button" value="Previous" onClick={prevStep} />
-          <input type="submit" className="submit action-button" value="Submit" />
-        </fieldset>
-      </form>
+    <div className="flex justify-center  h-screen pt-5">
+      <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+        <Steps current={step} className="mb-6">
+          <Step title="Detalles Personales" />
+          <Step title="Crear tu cuenta" />
+        </Steps>
+        <Form
+          form={form}
+          layout="vertical"
+          onFinish={handleFinish}
+          initialValues={{
+            fname: "",
+            lname: "",
+            address: "",
+            email: "",
+            pass: "",
+            cpass: "",
+            phone: "",
+          }}
+        >
+          {step === 0 && (
+            <div className="mb-4">
+              <Form.Item
+                name="fname"
+                label="First Name"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingresa tu primer nombre",
+                  },
+                ]}
+              >
+                <Input placeholder="First Name" />
+              </Form.Item>
+              <Form.Item
+                name="lname"
+                label="Last Name"
+                rules={[
+                  { required: true, message: "Por favor ingresa tu apellido" },
+                ]}
+              >
+                <Input placeholder="Last Name" />
+              </Form.Item>
+              <Form.Item
+                name="address"
+                label="Address"
+                rules={[
+                  { required: true, message: "Por favor ingresa tu dirección" },
+                ]}
+              >
+                <Input placeholder="Address" />
+              </Form.Item>
+              <Form.Item
+                name="phone"
+                label="Phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingresa tu teléfono",
+                    min: 9,
+                    message: "Numero de telefono invalido",
+                  },
+                ]}
+              >
+                <Input placeholder="Phone" />
+              </Form.Item>
+            </div>
+          )}
+          {step === 1 && (
+            <div className="mb-4">
+              <Form.Item
+                name="email"
+                label="Email"
+                rules={[
+                  {
+                    required: true,
+                    type: "email",
+                    message: "Por favor ingresa un email válido",
+                  },
+                ]}
+              >
+                <Input placeholder="Email" />
+              </Form.Item>
+              <Form.Item
+                name="pass"
+                label="Password"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingresa una contraseña",
+                  },
+                  {
+                    pattern:
+                      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                    message:
+                      "La contraseña debe tener al menos una letra mayúscula, una letra minúscula, un número y un carácter especial",
+                  },
+                ]}
+              >
+                <Input.Password placeholder="Password" />
+              </Form.Item>
+              <Form.Item
+                name="cpass"
+                label="Confirm Password"
+                dependencies={["pass"]}
+                hasFeedback
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor confirma tu contraseña",
+                  },
+                  ({ getFieldValue }) => ({
+                    validator(_, value) {
+                      if (!value || getFieldValue("pass") === value) {
+                        return Promise.resolve();
+                      }
+                      return Promise.reject(
+                        new Error("Las contraseñas no coinciden")
+                      );
+                    },
+                  }),
+                ]}
+              >
+                <Input.Password placeholder="Confirm Password" />
+              </Form.Item>
+            </div>
+          )}
+          <Form.Item className="text-right">
+            {step > 0 && (
+              <Button onClick={prevStep} className="mr-2">
+                Anterior
+              </Button>
+            )}
+            {step < 1 && (
+              <Button type="primary" onClick={nextStep}>
+                Siguiente
+              </Button>
+            )}
+            {step === 1 && (
+              <Button type="primary" htmlType="submit">
+                Enviar
+              </Button>
+            )}
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
 };

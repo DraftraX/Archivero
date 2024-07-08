@@ -1,52 +1,74 @@
-import React, { useEffect, useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  Button,
+  Avatar,
+  Typography,
+  Row,
+  Col,
+  Space,
+  Divider,
+  Descriptions,
+} from "antd";
+import {
+  UserOutlined,
+  PhoneOutlined,
+  HomeOutlined,
+  IdcardOutlined,
+  PlusOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+
+const { Title, Paragraph } = Typography;
 
 const Perfil = () => {
   const navigate = useNavigate();
 
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
   let username;
   if (token) {
-    const tokenParts = token.split('.');
+    const tokenParts = token.split(".");
     const encodedPayload = tokenParts[1];
     const decodedPayload = atob(encodedPayload);
     const parsedPayload = JSON.parse(decodedPayload);
-    
+
     username = parsedPayload.sub;
   } else {
-    console.log('No se encontró ningún token en el almacenamiento local.');
+    console.log("No se encontró ningún token en el almacenamiento local.");
   }
 
   const [userData, setUserData] = useState({
-    id: '',
-    name: '',
-    lastname: '',
-    address: '',
-    phone: '',
-    fotoPerfil: '',
-    cargoid: ''
+    id: "",
+    name: "",
+    lastname: "",
+    address: "",
+    phone: "",
+    fotoPerfil: "",
+    cargoid: "",
   });
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/usuario/verusuarioporusername/${username}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8080/usuario/verusuarioporusername/${username}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           setUserData(data);
         } else {
-          console.error('Error al obtener los datos del usuario');
+          console.error("Error al obtener los datos del usuario");
         }
       } catch (error) {
-        console.error('Error al obtener los datos del usuario:', error);
+        console.error("Error al obtener los datos del usuario:", error);
       }
     };
 
@@ -56,78 +78,91 @@ const Perfil = () => {
   }, [username, token]);
 
   return (
-    <section style={{ backgroundColor: '#eee' }}>
-      <div className="container py-5">
-        <div className="row">
-          <div className="col-lg-4">
-            <div className="card mb-4">
-              <div className="card-body text-center">
-                <div className="image-container centered">
-                  <img 
-                    src="https://img.icons8.com/?size=100&id=7819&format=png&color=000000"
-                    alt="avatar"
-                    className="rounded-circle img-fluid avatar" 
-                  />
-                </div>
-                <h5 className="my-3">{userData.name}</h5>
-                <p className="text-muted mb-1">{userData.cargoid}</p>
-                <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/createresolucion')}>Agregar Resoluciones</button>
-                </div>
-                <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/creategrado')}>Agregar Grados y Titulos</button>
-                </div>
-                <div className="d-flex justify-content-center mb-1">
-                  <button type="button" className="btn btn-secondary" onClick={() => navigate('/create')}>Crear usuario</button>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div className="col-lg-8">
-            <div className="card mb-4">
-              <div className="card-body">
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Name</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.name}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">LastName</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.lastname}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Phone</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.phone}</p>
-                  </div>
-                </div>
-                <hr />
-                <div className="row">
-                  <div className="col-sm-3">
-                    <p className="mb-0">Address</p>
-                  </div>
-                  <div className="col-sm-9">
-                    <p className="text-muted mb-0">{userData.address}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+    <div style={{ backgroundColor: "#f0f2f5", padding: "40px" }}>
+      <Row gutter={[24, 24]}>
+        <Col xs={24} md={8}>
+          <Card
+            style={{
+              textAlign: "center",
+              boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+              borderRadius: "10px",
+            }}
+          >
+            <Avatar
+              size={100}
+              icon={<UserOutlined />}
+              src="https://static.eldiario.es/clip/ab74aa95-3656-424c-8ca1-dce590aabb97_16-9-discover-aspect-ratio_default_0.jpg"
+              style={{ marginBottom: "16px" }}
+            />
+            <Title level={4}>{userData.name}</Title>
+            <Paragraph type="secondary">{userData.cargoid}</Paragraph>
+            <Divider />
+            <Space direction="vertical" size="middle" style={{ width: "100%" }}>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                block
+                onClick={() => navigate("/createresolucion")}
+              >
+                Agregar Resoluciones
+              </Button>
+              <Button
+                type="default"
+                icon={<IdcardOutlined />}
+                block
+                onClick={() => navigate("/creategrado")}
+              >
+                Agregar Grados y Titulos
+              </Button>
+              <Button
+                type="dashed"
+                icon={<SettingOutlined />}
+                block
+                onClick={() => navigate("/create")}
+              >
+                Crear usuario
+              </Button>
+            </Space>
+          </Card>
+        </Col>
+        <Col xs={24} md={16}>
+          <Card
+            style={{
+              boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
+              borderRadius: "10px",
+            }}
+          >
+            <Descriptions title="Información del Usuario" bordered>
+              <Descriptions.Item label="Nombre" span={3}>
+                <Space>
+                  <UserOutlined />
+                  <Paragraph>{userData.name}</Paragraph>
+                </Space>
+              </Descriptions.Item>
+              <Descriptions.Item label="Apellido" span={3}>
+                <Space>
+                  <UserOutlined />
+                  <Paragraph>{userData.lastname}</Paragraph>
+                </Space>
+              </Descriptions.Item>
+              <Descriptions.Item label="Teléfono" span={3}>
+                <Space>
+                  <PhoneOutlined />
+                  <Paragraph>{userData.phone}</Paragraph>
+                </Space>
+              </Descriptions.Item>
+              <Descriptions.Item label="Dirección" span={3}>
+                <Space>
+                  <HomeOutlined />
+                  <Paragraph>{userData.address}</Paragraph>
+                </Space>
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+      </Row>
+    </div>
   );
-}
+};
 
 export default Perfil;

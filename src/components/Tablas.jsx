@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Input, Select, Button, Table, Pagination } from "antd";
+import classNames from "classnames";
 import "../styles/Tabla.css";
+
+const { Option } = Select;
 
 export default function Tablas() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
@@ -13,21 +17,27 @@ export default function Tablas() {
   const [filters, setFilters] = useState({
     nro: "",
     nombre: "",
-    fecha: ""
+    fecha: "",
   });
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10; // Número de elementos por página
 
   useEffect(() => {
     const obtenerDocumentos = async () => {
-      const message = localStorage.getItem('navMessage');
+      const message = localStorage.getItem("navMessage");
 
       try {
-        const response = await fetch(`http://localhost:8080/resolucion/${message}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:8080/resolucion/${message}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("El servidor no respondió correctamente");
         }
@@ -36,13 +46,16 @@ export default function Tablas() {
         setFilteredDocumentos(data);
 
         const idcriteriomayor = message.split("/").pop();
-        const subcriteriosResponse = await fetch(`http://localhost:8080/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const subcriteriosResponse = await fetch(
+          `http://localhost:8080/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!subcriteriosResponse.ok) {
           throw new Error("Error al obtener subcriterios");
         }
@@ -61,19 +74,23 @@ export default function Tablas() {
       let filtered = documentos;
 
       if (filters.nro) {
-        filtered = filtered.filter(doc => doc.nrodoc.includes(filters.nro));
+        filtered = filtered.filter((doc) => doc.nrodoc.includes(filters.nro));
       }
 
       if (filters.nombre) {
-        filtered = filtered.filter(doc => doc.titulo.toLowerCase().includes(filters.nombre.toLowerCase()));
+        filtered = filtered.filter((doc) =>
+          doc.titulo.toLowerCase().includes(filters.nombre.toLowerCase())
+        );
       }
 
       if (filters.fecha) {
-        filtered = filtered.filter(doc => doc.fecha.includes(filters.fecha));
+        filtered = filtered.filter((doc) => doc.fecha.includes(filters.fecha));
       }
 
       if (selectedSubcriterio) {
-        filtered = filtered.filter(doc => doc.tipocriterio === selectedSubcriterio);
+        filtered = filtered.filter(
+          (doc) => doc.tipocriterio === selectedSubcriterio
+        );
       }
 
       setFilteredDocumentos(filtered);
@@ -85,116 +102,143 @@ export default function Tablas() {
   const handleFilterChange = (e) => {
     setFilters({
       ...filters,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
-  const handleSubcriterioChange = (e) => {
-    setSelectedSubcriterio(e.target.value);
+  const handleSubcriterioChange = (value) => {
+    setSelectedSubcriterio(value);
   };
 
   const clearFilters = () => {
     setFilters({
       nro: "",
       nombre: "",
-      fecha: ""
+      fecha: "",
     });
     setSelectedSubcriterio("");
   };
 
   useEffect(() => {
     const handlePopState = () => {
-      localStorage.setItem('navMessage', "verresolucion/");
+      localStorage.setItem("navMessage", "verresolucion/");
       window.location.reload();
     };
 
-    window.addEventListener('popstate', handlePopState);
+    window.addEventListener("popstate", handlePopState);
 
     return () => {
-      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener("popstate", handlePopState);
     };
   }, []);
 
   const handleSaveIdAndRedirect = (id) => {
-    localStorage.setItem('documentId', id);
-    navigate('/verresolucion');
+    localStorage.setItem("documentId", id);
+    navigate("/verresolucion");
   };
 
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const columns = [
+    {
+      title: "NRO:",
+      dataIndex: "nrodoc",
+      key: "nrodoc",
+      width: 100,
+    },
+    {
+      title: "Título:",
+      dataIndex: "titulo",
+      key: "titulo",
+    },
+    {
+      title: "Fecha:",
+      dataIndex: "fecha",
+      key: "fecha",
+      width: 150,
+    },
+    {
+      title: "Enlace:",
+      key: "enlace",
+      width: 100,
+      render: (text, record) => (
+        <Button
+          type="primary"
+          onClick={() => handleSaveIdAndRedirect(record.nrodoc)}
+          className="rounded-md"
+        >
+          Ver
+        </Button>
+      ),
+    },
+  ];
+
+  // Calcular el índice de inicio y fin de los documentos a mostrar en la página actual
+  const indexOfLastDoc = currentPage * pageSize;
+  const indexOfFirstDoc = indexOfLastDoc - pageSize;
+  const currentDocs = filteredDocumentos.slice(indexOfFirstDoc, indexOfLastDoc);
+
   return (
-    <div>
-      <div className="container mt-5 text-center">
-        <h1 className="title">Archivo General Universitario - UNSM</h1>
+    <div className="container mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Archivo General Universitario - UNSM
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+        <Input
+          name="nro"
+          placeholder="Filtrar por NRO"
+          value={filters.nro}
+          onChange={handleFilterChange}
+          className="col-span-1"
+        />
+        <Input
+          name="nombre"
+          placeholder="Filtrar por Nombre de Documento"
+          value={filters.nombre}
+          onChange={handleFilterChange}
+          className="col-span-1"
+        />
+        <Input
+          name="fecha"
+          placeholder="Filtrar por Fecha"
+          value={filters.fecha}
+          onChange={handleFilterChange}
+          className="col-span-1"
+        />
+        <Select
+          placeholder="Seleccionar Subcriterio"
+          value={selectedSubcriterio}
+          onChange={handleSubcriterioChange}
+          className="col-span-1"
+        >
+          {subcriterios.map((subcriterio) => (
+            <Option key={subcriterio.mainid} value={subcriterio.criteryname}>
+              {subcriterio.criteryname}
+            </Option>
+          ))}
+        </Select>
+        <Button onClick={clearFilters} className="col-span-1">
+          Limpiar Filtros
+        </Button>
       </div>
-      <div className="container mt-5">
-        <div className="filters-container">
-          <div className="filters">
-            <input
-              type="text"
-              name="nro"
-              placeholder="Filtrar por NRO"
-              value={filters.nro}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="nombre"
-              placeholder="Filtrar por Nombre de Documento"
-              value={filters.nombre}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="fecha"
-              placeholder="Filtrar por Fecha"
-              value={filters.fecha}
-              onChange={handleFilterChange}
-            />
-            <select
-              name="subcriterio"
-              value={selectedSubcriterio}
-              onChange={handleSubcriterioChange}
-              className="dropdown"
-            >
-              <option value="">Seleccionar Subcriterio</option>
-              {subcriterios.map(subcriterio => (
-                <option key={subcriterio.mainid} value={subcriterio.criteryname}>
-                  {subcriterio.criteryname}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={clearFilters}
-              className="button"
-            >
-              Limpiar Filtros
-            </button>
-          </div>
-        </div>
-        <table className="custom-table">
-          <thead>
-            <tr>
-              <th scope="col">NRO:</th>
-              <th scope="col">Título:</th>
-              <th scope="col">Fecha:</th>
-              <th scope="col">Enlace:</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDocumentos.map((documento) => (
-              <tr key={documento.nrodoc}>
-                <td>{documento.nrodoc}</td>
-                <td>{documento.titulo}</td>
-                <td>{documento.fecha}</td>
-                <td>
-                  <button onClick={() => handleSaveIdAndRedirect(documento.nrodoc)}>
-                    Ver
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table
+        dataSource={currentDocs}
+        columns={columns}
+        rowKey="nrodoc"
+        className="custom-table"
+        pagination={false} // Desactiva la paginación de Ant Design
+      />
+      <Pagination
+        className="mt-4"
+        current={currentPage}
+        total={filteredDocumentos.length}
+        pageSize={pageSize}
+        onChange={handleChangePage}
+        showSizeChanger={false}
+        showQuickJumper={false}
+      />
     </div>
   );
 }

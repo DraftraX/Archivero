@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import Swal from 'sweetalert2';
-import '../../styles/ForgotPassword.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import '@fortawesome/fontawesome-free/css/all.min.css';
+import { Form, Input, Button, Card, Row, Col, message } from "antd";
+
+const { Item } = Form;
 
 export function RestablecerContrasena() {
-  const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -16,101 +15,111 @@ export function RestablecerContrasena() {
       username: username,
     };
 
-    const response = await fetch('http://localhost:8080/change-password/enviarcorreo', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestBody)
-    });
+    try {
+      const response = await fetch(
+        "http://localhost:8080/change-password/enviarcorreo",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
 
-    if (response.ok) {
-      Swal.fire({
-        icon: 'success',
-        title: 'Correo enviado',
-        text: 'Correo enviado con éxito.',
-      });
-    } else {
-      Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Error al enviar el correo.',
-      });
+      if (response.ok) {
+        message.success("Correo enviado con éxito.");
+      } else {
+        message.error("Error al enviar el correo.");
+      }
+    } catch (error) {
+      console.error("Error al enviar el correo:", error);
+      message.error(
+        "Hubo un problema al enviar el correo. Por favor, inténtalo de nuevo más tarde."
+      );
     }
   };
 
   return (
-    <div className="vertical-layout 1-column navbar-sticky bg-full-screen-image footer-static blank-page light-layout centered">
-      <div className="app-content content">
-        <div className="content-overlay"></div>
-        <div className="content-wrapper">
-          <div className="content-header row"></div>
-          <div className="content-body">
-            <section className="row flexbox-container centered">
-              <div className="col-xl-7 col-md-9 col-10 px-100">
-                <div className="card bg-authentication mb-0">
-                  <div className="row m-0">
-                    <div className="col-md-6 col-12 px-0">
-                      <div className="card disable-rounded-right mb-0 p-2">
-                        <div className="card-header pb-1">
-                          <div className="card-title">
-                            <h4 className="text-center mb-2">¿Olvidaste tu Contraseña?</h4>
-                          </div>
-                        </div>
-                        <div className="card-body">
-                          <div className="text-muted text-center mb-2">
-                            <small>Ingrese el correo electrónico con el cual te registraste</small>
-                          </div>
-                          <form className="mb-2" onSubmit={handleSubmit}>
-                            <div className="form-group mb-2">
-                              <label className="text-bold-600" htmlFor="email">Correo electrónico</label>
-                              <input 
-                                id="email" 
-                                type="email" 
-                                className="form-control" 
-                                name="email" 
-                                autoComplete="email" 
-                                autoFocus 
-                                placeholder="Email" 
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                              />
-                            </div>
-                            <div className="form-group mb-2">
-                              <label className="text-bold-600" htmlFor="username">Nombre de usuario</label>
-                              <input 
-                                id="username" 
-                                type="text" 
-                                className="form-control" 
-                                name="username" 
-                                autoComplete="username" 
-                                placeholder="Nombre de usuario" 
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
-                              />
-                            </div>
-                            <button type="submit" className="btn btn-primary glow position-relative" style={{ fontSize: '0.775rem' }}>
-                              RECUPERAR MI CONTRASEÑA
-                            </button>
-                          </form>
-                          <div className="text-center mb-2">
-                            <a href="/login">
-                              <small className="text-muted">Recuerdo mi contraseña</small>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="col-md-6 d-md-block d-none text-center align-self-center">
-                      <img className="img-fluid" src="./unsm.png" alt="LOGO UNSM" width="500" />
-                    </div>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <Row justify="center" className="w-full">
+        <Col xl={8} lg={10} md={12} sm={20} xs={24}>
+          <Card className="bg-white shadow-lg rounded-lg overflow-hidden h-full">
+            <div className="grid grid-cols-2">
+              <div>
+                <div className="p-6">
+                  <h2 className="text-2xl font-semibold mb-4">
+                    ¿Olvidaste tu Contraseña?
+                  </h2>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Ingresa el correo electrónico con el cual te registraste
+                  </p>
+                  <Form onFinish={handleSubmit}>
+                    <Item
+                      name="email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Por favor ingresa tu correo electrónico",
+                        },
+                      ]}
+                    >
+                      <Input
+                        type="email"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full py-2 px-3 border border-gray-300 rounded"
+                      />
+                    </Item>
+                    <Item
+                      name="username"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Por favor ingresa tu nombre de usuario",
+                        },
+                      ]}
+                    >
+                      <Input
+                        type="text"
+                        placeholder="Nombre de usuario"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        className="w-full py-2 px-3 border border-gray-300 rounded mt-4"
+                      />
+                    </Item>
+                    <Item>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="w-full py-2 mt-4 bg-blue-500 hover:bg-blue-600 text-white"
+                      >
+                        RECUPERAR MI CONTRASEÑA
+                      </Button>
+                    </Item>
+                  </Form>
+                  <div className="text-center mt-4">
+                    <a href="/login" className="text-sm text-gray-500">
+                      Recuerdo mi contraseña
+                    </a>
                   </div>
                 </div>
               </div>
-            </section>
-          </div>
-        </div>
-      </div>
+              <div>
+                <div
+                  className="bg-cover bg-center h-full"
+                  style={{
+                    backgroundImage:
+                      "url(https://unsm.edu.pe/wp-content/uploads/2023/06/logo-1x1-unsm.jpg)",
+                    minHeight: "100%",
+                  }}
+                />
+              </div>
+            </div>
+          </Card>
+        </Col>
+      </Row>
     </div>
   );
 }

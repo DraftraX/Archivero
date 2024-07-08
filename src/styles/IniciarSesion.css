@@ -15,12 +15,5 @@
         h3{
             font-size: small;
         }
-        .boton{
-            display: flex;
-            align-items: center;
-            height: 5vh;
-            width: 100%;
-            justify-content: center;
-        }
     }
 }

@@ -1,142 +1,194 @@
-import React, { useState } from 'react';
-import '../styles/MultiStepForm.css';
-import Swal from 'sweetalert2';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Form, Input, Button, Upload, message } from "antd";
+import { UploadOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
 
 const FormularioDocumento = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
-  const [Request, setRequest] = useState({
-    nombreapellido: '',
-    dni: '',
-    fechaexpedicion: '',
-    facultadescuela: '',
-    gradotitulo: '',
-    idresolucion: '',
-    pdf: null,
-  });
+  const [form] = Form.useForm();
+  const [file, setFile] = useState(null);
 
-  // Manejo de cambios en los campos del formulario
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === 'pdf' && files) {
-      setRequest({ ...Request, pdf: files[0] });
-    } else {
-      setRequest({ ...Request, [name]: value });
+  const handleChange = (info) => {
+    if (info.file.status === "done") {
+      setFile(info.file.originFileObj);
     }
   };
 
-  // Validación del formulario
-  const validateForm = () => {
-    const { nombreapellido, dni, fechaexpedicion, facultadescuela, gradotitulo, idresolucion } = Request;
+  const handleSubmit = async (values) => {
+    const {
+      nombreapellido,
+      dni,
+      fechaexpedicion,
+      facultadescuela,
+      gradotitulo,
+      idresolucion,
+    } = values;
 
-    if (!nombreapellido || !dni || !fechaexpedicion || !facultadescuela || !gradotitulo || !idresolucion) {
-      Swal.fire("Todos los campos son obligatorios", "", "error");
-      return false;
-    }
-
-    return true;
-  };
-
-  // Manejo del envío del formulario
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
+    if (
+      !nombreapellido ||
+      !dni ||
+      !fechaexpedicion ||
+      !facultadescuela ||
+      !gradotitulo ||
+      !idresolucion
+    ) {
+      message.error("Todos los campos son obligatorios");
       return;
     }
 
     const formData = new FormData();
-    formData.append('nombreapellido', Request.nombreapellido);
-    formData.append('dni', Request.dni);
-    formData.append('fechaexpedicion', Request.fechaexpedicion);
-    formData.append('facultadescuela', Request.facultadescuela);
-    formData.append('gradotitulo', Request.gradotitulo);
-    formData.append('idresolucion', Request.idresolucion);
-    if (Request.pdf) {
-      formData.append('pdf', Request.pdf);
+    formData.append("nombreapellido", nombreapellido);
+    formData.append("dni", dni);
+    formData.append("fechaexpedicion", fechaexpedicion);
+    formData.append("facultadescuela", facultadescuela);
+    formData.append("gradotitulo", gradotitulo);
+    formData.append("idresolucion", idresolucion);
+    if (file) {
+      formData.append("pdf", file);
     }
 
     try {
-      const response = await fetch('http://localhost:8080/gradotitulos/nuevogradotitulo', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        "http://localhost:8080/gradotitulos/nuevogradotitulo",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
-        Swal.fire("¡Documento creado con éxito!", "", "success");
+        message.success("¡Documento creado con éxito!");
         navigate("/perfil");
       } else {
-        Swal.fire("¡Error al crear el documento!", "", "error");
+        message.error("¡Error al crear el documento!");
       }
     } catch (error) {
-      Swal.fire("¡Error al crear el documento!", "", "error");
-      console.error('Error al crear el documento:', error);
+      message.error("¡Error al crear el documento!");
+      console.error("Error al crear el documento:", error);
     }
   };
 
   return (
-    <div>
-      <form id="msform" onSubmit={handleSubmit}>
-        <fieldset>
-          <h2 className="fs-title">Detalles del Documento</h2>
-          <input
-            type="text"
-            name="nombreapellido"
-            placeholder="Nombre y Apellido"
-            value={Request.nombreapellido}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="dni"
-            placeholder="DNI"
-            value={Request.dni}
-            onChange={handleChange}
-          />
-          <input
-            type="date"
-            name="fechaexpedicion"
-            placeholder="Fecha de Expedición"
-            value={Request.fechaexpedicion}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="facultadescuela"
-            placeholder="Facultad o Escuela"
-            value={Request.facultadescuela}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="gradotitulo"
-            placeholder="Grado o Título"
-            value={Request.gradotitulo}
-            onChange={handleChange}
-          />
-          <input
-            type="text"
-            name="idresolucion"
-            placeholder="ID de Resolución"
-            value={Request.idresolucion}
-            onChange={handleChange}
-          />
-          <input
-            type="file"
+    <div className="flex justify-center  h-auto  pt-8">
+      <div className="w-full max-w-2xl p-8 space-y-8 bg-white rounded-lg shadow-lg">
+        <h2 className="text-2xl font-bold text-center">
+          Detalles del Documento
+        </h2>
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <div className="grid grid-flow-col-dense gap-4">
+            <div>
+              <Form.Item
+                name="nombreapellido"
+                label="Nombre y Apellido"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese su nombre y apellido",
+                  },
+                ]}
+              >
+                <Input placeholder="Nombre y Apellido" />
+              </Form.Item>
+              <Form.Item
+                name="dni"
+                label="DNI"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese su DNI",
+                    min: 8,
+                    message: "Numero de documento incorrecto",
+                    max: 8,
+                    message: "Numero de documento incorrecto",
+                  },
+                ]}
+              >
+                <Input placeholder="DNI" />
+              </Form.Item>
+              <Form.Item
+                name="gradotitulo"
+                label="Grado o Título"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese el grado o título",
+                  },
+                ]}
+              >
+                <Input placeholder="Grado o Título" />
+              </Form.Item>
+            </div>
+            <div>
+              <Form.Item
+                name="fechaexpedicion"
+                label="Fecha de Expedición"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese la fecha de expedición",
+                  },
+                ]}
+              >
+                <Input type="date" />
+              </Form.Item>
+              <Form.Item
+                name="facultadescuela"
+                label="Facultad o Escuela"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese la facultad o escuela",
+                  },
+                ]}
+              >
+                <Input placeholder="Facultad o Escuela" />
+              </Form.Item>
+              <Form.Item
+                name="idresolucion"
+                label="ID de Resolución"
+                rules={[
+                  {
+                    required: true,
+                    message: "Por favor ingrese el ID de resolución",
+                  },
+                ]}
+              >
+                <Input placeholder="ID de Resolución" />
+              </Form.Item>
+            </div>
+          </div>
+
+          <Form.Item
             name="pdf"
-            accept="application/pdf"
-            onChange={handleChange}
-          />
-          <input type="submit" className="submit action-button" value="Submit" />
-        </fieldset>
-      </form>
+            label="Archivo PDF"
+            valuePropName="fileList"
+            getValueFromEvent={(e) => e && e.fileList}
+            extra="Seleccione un archivo PDF"
+          >
+            <Upload
+              name="pdf"
+              accept="application/pdf"
+              beforeUpload={() => false}
+              onChange={handleChange}
+              maxCount={1}
+            >
+              <Button icon={<UploadOutlined />}>Subir Archivo</Button>
+            </Upload>
+          </Form.Item>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="w-full">
+              Submit
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </div>
   );
-}
+};
 
 export default FormularioDocumento;
