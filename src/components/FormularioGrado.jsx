@@ -1,58 +1,80 @@
 import React, { useState } from "react";
-import { Form, Input, Button, Upload, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import "../styles/MultiStepForm.css";
 import { useNavigate } from "react-router-dom";
+import {
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Upload,
+  Space,
+  Typography,
+  Card,
+  message,
+} from "antd";
+import { UploadOutlined } from "@ant-design/icons";
 import { API_URL } from "../../url.js";
+import { z } from "zod";
 
-const FormularioDocumento = () => {
+const { Title } = Typography;
+
+// Define the document schema
+const documentSchema = z.object({
+  nombreapellido: z.string().nonempty("El nombre y apellido son obligatorios"),
+  dni: z.string().nonempty("El DNI es obligatorio"),
+  fechaexpedicion: z.string().nonempty("La fecha de expedición es obligatoria"),
+  facultadescuela: z.string().nonempty("La facultad o escuela es obligatoria"),
+  gradotitulo: z.string().nonempty("El grado o título es obligatorio"),
+  idresolucion: z.string().nonempty("La resolución es obligatoria"),
+  pdf: z.any().nullable(),
+});
+
+const FormularioGrado = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
-  const [form] = Form.useForm();
-  const [file, setFile] = useState(null);
+  const [Request, setRequest] = useState({
+    nombreapellido: "",
+    dni: "",
+    fechaexpedicion: "",
+    facultadescuela: "",
+    gradotitulo: "",
+    idresolucion: "",
+    pdf: null,
+  });
 
-  const handleChange = (info) => {
-    if (info.file.status === "done") {
-      setFile(info.file.originFileObj);
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    if (name === "pdf" && files) {
+      setRequest({ ...Request, pdf: files[0] });
+    } else {
+      setRequest({ ...Request, [name]: value });
     }
   };
 
   const handleSubmit = async (values) => {
-    const {
-      nombreapellido,
-      dni,
-      fechaexpedicion,
-      facultadescuela,
-      gradotitulo,
-      idresolucion,
-    } = values;
-
-    if (
-      !nombreapellido ||
-      !dni ||
-      !fechaexpedicion ||
-      !facultadescuela ||
-      !gradotitulo ||
-      !idresolucion
-    ) {
-      message.error("Todos los campos son obligatorios");
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append("nombreapellido", nombreapellido);
-    formData.append("dni", dni);
-    formData.append("fechaexpedicion", fechaexpedicion);
-    formData.append("facultadescuela", facultadescuela);
-    formData.append("gradotitulo", gradotitulo);
-    formData.append("idresolucion", idresolucion);
-    if (file) {
-      formData.append("pdf", file);
-    }
-
     try {
+      const parsedValues = {
+        ...values,
+        fechaexpedicion: values.fechaexpedicion.format("YYYY-MM-DD"),
+        pdf: Request.pdf,
+      };
+
+      documentSchema.parse(parsedValues);
+
+      const formData = new FormData();
+      formData.append("nombreapellido", values.nombreapellido);
+      formData.append("dni", values.dni);
+      formData.append("fechaexpedicion", parsedValues.fechaexpedicion);
+      formData.append("facultadescuela", values.facultadescuela);
+      formData.append("gradotitulo", values.gradotitulo);
+      formData.append("idresolucion", values.idresolucion);
+      if (Request.pdf) {
+        formData.append("pdf", Request.pdf);
+      }
+
       const response = await fetch(
-        API_URL+"/gradotitulos/nuevogradotitulo",
+        API_URL + "/gradotitulos/nuevogradotitulo",
         {
           method: "POST",
           headers: {
@@ -63,133 +85,125 @@ const FormularioDocumento = () => {
       );
 
       if (response.ok) {
-        message.success("¡Documento creado con éxito!");
+        message.success("¡Grado creado con éxito!");
         navigate("/perfil");
       } else {
-        message.error("¡Error al crear el documento!");
+        message.error("¡Error al crear el grado!");
       }
     } catch (error) {
-      message.error("¡Error al crear el documento!");
-      console.error("Error al crear el documento:", error);
+      if (error.errors) {
+        error.errors.forEach((err) => {
+          message.error(`¡Error al crear el grado! ${err.message}`);
+        });
+      } else {
+        message.error(`¡Error al crear el grado! ${error.message}`);
+      }
     }
   };
 
   return (
-    <div className="flex justify-center  h-auto  pt-8">
-      <div className="w-full max-w-2xl p-8 space-y-8 bg-white rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-center">
-          Detalles del Documento
-        </h2>
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+    <div className="h-full">
+      <Card style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
+        <Title level={2} style={{ textAlign: "center" }}>
+          Formulario de Grado
+        </Title>
+        <Form
+          id="msform"
+          onFinish={handleSubmit}
+          layout="vertical"
+          initialValues={Request}
+        >
           <div className="grid grid-flow-col-dense gap-4">
             <div>
               <Form.Item
-                name="nombreapellido"
                 label="Nombre y Apellido"
+                name="nombreapellido"
                 rules={[
                   {
                     required: true,
-                    message: "Por favor ingrese su nombre y apellido",
+                    message: "Debe ingresar el nombre y apellido",
                   },
                 ]}
               >
                 <Input placeholder="Nombre y Apellido" />
               </Form.Item>
               <Form.Item
-                name="dni"
                 label="DNI"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor ingrese su DNI",
-                    min: 8,
-                    message: "Numero de documento incorrecto",
-                    max: 8,
-                    message: "Numero de documento incorrecto",
-                  },
-                ]}
+                name="dni"
+                rules={[{ required: true, message: "Debe ingresar el DNI" }]}
               >
                 <Input placeholder="DNI" />
-              </Form.Item>
-              <Form.Item
-                name="gradotitulo"
-                label="Grado o Título"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor ingrese el grado o título",
-                  },
-                ]}
-              >
-                <Input placeholder="Grado o Título" />
               </Form.Item>
             </div>
             <div>
               <Form.Item
-                name="fechaexpedicion"
                 label="Fecha de Expedición"
+                name="fechaexpedicion"
                 rules={[
-                  {
-                    required: true,
-                    message: "Por favor ingrese la fecha de expedición",
-                  },
+                  { required: true, message: "Debe ingresar una fecha de expedición" },
                 ]}
               >
-                <Input type="date" />
+                <DatePicker style={{ width: "100%" }} />
               </Form.Item>
               <Form.Item
-                name="facultadescuela"
                 label="Facultad o Escuela"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor ingrese la facultad o escuela",
-                  },
-                ]}
+                name="facultadescuela"
+                rules={[{ required: true, message: "Debe ingresar la facultad o escuela" }]}
               >
                 <Input placeholder="Facultad o Escuela" />
-              </Form.Item>
-              <Form.Item
-                name="idresolucion"
-                label="ID de Resolución"
-                rules={[
-                  {
-                    required: true,
-                    message: "Por favor ingrese el ID de resolución",
-                  },
-                ]}
-              >
-                <Input placeholder="ID de Resolución" />
               </Form.Item>
             </div>
           </div>
 
           <Form.Item
-            name="pdf"
-            label="Archivo PDF"
-            valuePropName="fileList"
-            getValueFromEvent={(e) => e && e.fileList}
-            extra="Seleccione un archivo PDF"
+            label="Grado o Título"
+            name="gradotitulo"
+            rules={[
+              {
+                required: true,
+                message: "Debe ingresar el grado o título",
+              },
+            ]}
           >
+            <Input placeholder="Grado o Título" />
+          </Form.Item>
+          <Form.Item
+            label="Resolución"
+            name="idresolucion"
+            rules={[
+              {
+                required: true,
+                message: "Debe ingresar una resolución",
+              },
+            ]}
+          >
+            <Input placeholder="Resolución" />
+          </Form.Item>
+          <Form.Item label="PDF" name="pdf">
             <Upload
-              name="pdf"
               accept="application/pdf"
-              beforeUpload={() => false}
-              onChange={handleChange}
-              maxCount={1}
+              beforeUpload={(file) => {
+                setRequest({ ...Request, pdf: file });
+                return false;
+              }}
             >
-              <Button icon={<UploadOutlined />}>Subir Archivo</Button>
+              <Button icon={<UploadOutlined />}>Subir PDF</Button>
             </Upload>
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full">
-              Submit
-            </Button>
+            <Space style={{ width: "100%", justifyContent: "center" }}>
+              <Button type="primary" htmlType="submit">
+                Enviar
+              </Button>
+              <Button type="default" onClick={() => navigate("/perfil")}>
+                Cancelar
+              </Button>
+            </Space>
           </Form.Item>
         </Form>
-      </div>
+      </Card>
     </div>
   );
 };
 
-export default FormularioDocumento;
+export default FormularioGrado;
