@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import "../styles/DetalleDocumento.css";
+import { Spin, message, Divider } from "antd";
 import { API_URL } from "../../url.js";
 
 export default function DocumentoDetalle() {
@@ -9,7 +9,7 @@ export default function DocumentoDetalle() {
   const [error, setError] = useState(null);
 
   const documentId = localStorage.getItem("documentId");
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   if (!documentId) {
     setError("No se encontró el ID del documento en el localStorage.");
@@ -20,12 +20,15 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(API_URL+`/gradotitulos/vergradotitulo/${documentId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/gradotitulos/vergradotitulo/${documentId}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Error al obtener el documento");
         }
@@ -33,6 +36,8 @@ export default function DocumentoDetalle() {
         setDocumento(data);
       } catch (error) {
         setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -42,12 +47,15 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(API_URL+`/gradotitulos/vergradotitulo/${documentId}/pdf`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `${API_URL}/gradotitulos/vergradotitulo/${documentId}/pdf`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("Error al obtener el PDF del documento");
         }
@@ -56,6 +64,7 @@ export default function DocumentoDetalle() {
         setPdfUrl(pdfUrl);
       } catch (error) {
         setError(error.message);
+        message.error("No se pudo cargar el PDF.");
       } finally {
         setLoading(false);
       }
@@ -65,7 +74,7 @@ export default function DocumentoDetalle() {
   }, [documentId, token]);
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <Spin size="large" />;
   }
 
   if (error) {
@@ -73,24 +82,71 @@ export default function DocumentoDetalle() {
   }
 
   return (
-    <div className="documento-detalle">
-      <h1>Detalle del Documento</h1>
-      {documento && (
-        <div className="documento-info">
-          <p><strong>Nombre y Apellido:</strong> {documento.nombreapellido}</p>
-          <p><strong>DNI:</strong> {documento.dni}</p>
-          <p><strong>Fecha de Expedición:</strong> {documento.fechaexpedicion}</p>
-          <p><strong>Facultad o Escuela:</strong> {documento.facultadescuela}</p>
-          <p><strong>Grado o Título:</strong> {documento.gradotitulo}</p>
-          <p><strong>ID de Resolución:</strong> {documento.idresolucion}</p>
+    <div className="mx-auto max-w-4xl p-6 bg-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Detalle del Documento
+      </h1>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div>
+          <Divider orientation="left">Información del Documento</Divider>
+          <div className="ant-descriptions">
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">
+                Nombre y Apellido:
+              </div>
+              <div className="ant-descriptions-item-content">
+                {documento.nombreapellido}
+              </div>
+            </div>
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">DNI:</div>
+              <div className="ant-descriptions-item-content">
+                {documento.dni}
+              </div>
+            </div>
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">
+                Fecha de Expedición:
+              </div>
+              <div className="ant-descriptions-item-content">
+                {documento.fechaexpedicion}
+              </div>
+            </div>
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">
+                Facultad o Escuela:
+              </div>
+              <div className="ant-descriptions-item-content">
+                {documento.facultadescuela}
+              </div>
+            </div>
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">Grado o Título:</div>
+              <div className="ant-descriptions-item-content">
+                {documento.gradotitulo}
+              </div>
+            </div>
+            <div className="ant-descriptions-item">
+              <div className="ant-descriptions-item-label">
+                ID de Resolución:
+              </div>
+              <div className="ant-descriptions-item-content">
+                {documento.idresolucion}
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      <div className="pdf-viewer">
-        {pdfUrl ? (
-          <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
-        ) : (
-          <p>No se pudo cargar el PDF.</p>
-        )}
+        <div className="border border-gray-200 rounded-lg p-4">
+          {pdfUrl ? (
+            <embed
+              className="w-full h-full"
+              src={pdfUrl}
+              type="application/pdf"
+            />
+          ) : (
+            <p>No se pudo cargar el PDF.</p>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -28,16 +28,13 @@ export default function Tablas() {
       const message = localStorage.getItem("navMessage");
 
       try {
-        const response = await fetch(
-          API_URL + `/resolucion/${message}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(API_URL + `/resolucion/${message}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("El servidor no respondió correctamente");
         }
@@ -47,7 +44,8 @@ export default function Tablas() {
 
         const idcriteriomayor = message.split("/").pop();
         const subcriteriosResponse = await fetch(
-          API_URL + `/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
+          API_URL +
+            `/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
           {
             method: "GET",
             headers: {

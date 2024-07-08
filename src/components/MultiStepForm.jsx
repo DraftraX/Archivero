@@ -6,19 +6,28 @@ const { Step } = Steps;
 
 const MultiStepForm = () => {
   const [step, setStep] = useState(0);
+  const [formData, setFormData] = useState({});
   const [form] = Form.useForm();
   const navigate = useNavigate();
 
   const nextStep = async () => {
     try {
       if (step === 0) {
-        await form.validateFields(["fname", "lname", "address", "phone"]);
+        const values = await form.validateFields([
+          "fname",
+          "lname",
+          "address",
+          "phone",
+        ]);
+        setFormData({ ...formData, ...values });
       } else if (step === 1) {
-        await form.validateFields(["email", "pass", "cpass"]);
+        const values = await form.validateFields(["email", "pass", "cpass"]);
+        setFormData({ ...formData, ...values });
       }
       setStep(step + 1);
     } catch (error) {
       // Handle validation error
+      console.error("Validation error:", error);
     }
   };
 
@@ -27,7 +36,8 @@ const MultiStepForm = () => {
   };
 
   const handleFinish = async (values) => {
-    const { fname, lname, address, phone, email, pass } = values;
+    const finalFormData = { ...formData, ...values };
+    const { fname, lname, address, phone, email, pass } = finalFormData;
     const UsuarioRequest = {
       name: fname,
       lastname: lname,
@@ -40,11 +50,9 @@ const MultiStepForm = () => {
 
     const token = localStorage.getItem("token");
 
-    console.log(UsuarioRequest);
-
     try {
       const response = await fetch(
-        API_URL+"/usuario/nuevousuario",
+        "http://localhost:8080/usuario/nuevousuario",
         {
           method: "POST",
           headers: {
@@ -59,7 +67,14 @@ const MultiStepForm = () => {
         message.success("¡Usuario creado con éxito!");
         navigate("/perfil");
       } else {
-        message.error("Hubo un problema al crear el usuario");
+        if (response.status === 409) {
+          // Manejar el caso específico de duplicidad de nombre de usuario
+          message.error("El nombre de usuario ya está en uso.");
+        } else {
+          const errorData = await response.json();
+          console.error("Error response:", errorData);
+          message.error("Hubo un problema al crear el usuario");
+        }
       }
     } catch (error) {
       message.error("Hubo un problema al crear el usuario");
@@ -68,7 +83,7 @@ const MultiStepForm = () => {
   };
 
   return (
-    <div className="flex justify-center  h-screen pt-5">
+    <div className="flex justify-center h-screen pt-5">
       <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
         <Steps current={step} className="mb-6">
           <Step title="Detalles Personales" />
@@ -92,47 +107,53 @@ const MultiStepForm = () => {
             <div className="mb-4">
               <Form.Item
                 name="fname"
-                label="First Name"
+                label="Nombre"
                 rules={[
                   {
                     required: true,
-                    message: "Por favor ingresa tu primer nombre",
+                    message: "Por favor ingresa tu nombre",
                   },
                 ]}
               >
-                <Input placeholder="First Name" />
+                <Input placeholder="Nombre" />
               </Form.Item>
               <Form.Item
                 name="lname"
-                label="Last Name"
+                label="Apellido"
                 rules={[
-                  { required: true, message: "Por favor ingresa tu apellido" },
+                  {
+                    required: true,
+                    message: "Por favor ingresa tu apellido",
+                  },
                 ]}
               >
-                <Input placeholder="Last Name" />
+                <Input placeholder="Apellido" />
               </Form.Item>
               <Form.Item
                 name="address"
-                label="Address"
+                label="Dirección"
                 rules={[
-                  { required: true, message: "Por favor ingresa tu dirección" },
+                  {
+                    required: true,
+                    message: "Por favor ingresa tu dirección",
+                  },
                 ]}
               >
-                <Input placeholder="Address" />
+                <Input placeholder="Dirección" />
               </Form.Item>
               <Form.Item
                 name="phone"
-                label="Phone"
+                label="Teléfono"
                 rules={[
                   {
                     required: true,
                     message: "Por favor ingresa tu teléfono",
                     min: 9,
-                    message: "Numero de telefono invalido",
+                    message: "Número de teléfono inválido",
                   },
                 ]}
               >
-                <Input placeholder="Phone" />
+                <Input placeholder="Teléfono" />
               </Form.Item>
             </div>
           )}
@@ -140,20 +161,20 @@ const MultiStepForm = () => {
             <div className="mb-4">
               <Form.Item
                 name="email"
-                label="Email"
+                label="Correo Electrónico"
                 rules={[
                   {
                     required: true,
                     type: "email",
-                    message: "Por favor ingresa un email válido",
+                    message: "Por favor ingresa un correo electrónico válido",
                   },
                 ]}
               >
-                <Input placeholder="Email" />
+                <Input placeholder="Correo Electrónico" />
               </Form.Item>
               <Form.Item
                 name="pass"
-                label="Password"
+                label="Contraseña"
                 rules={[
                   {
                     required: true,
@@ -167,11 +188,11 @@ const MultiStepForm = () => {
                   },
                 ]}
               >
-                <Input.Password placeholder="Password" />
+                <Input.Password placeholder="Contraseña" />
               </Form.Item>
               <Form.Item
                 name="cpass"
-                label="Confirm Password"
+                label="Confirmar Contraseña"
                 dependencies={["pass"]}
                 hasFeedback
                 rules={[
@@ -191,7 +212,7 @@ const MultiStepForm = () => {
                   }),
                 ]}
               >
-                <Input.Password placeholder="Confirm Password" />
+                <Input.Password placeholder="Confirmar Contraseña" />
               </Form.Item>
             </div>
           )}

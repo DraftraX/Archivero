@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Input, Button, Table, Space } from "antd";
 import "../styles/Tabla.css";
 import { API_URL } from "../../url.js";
 
+const { Column } = Table;
 
 export default function Tablas() {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem("token");
 
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
@@ -21,13 +23,16 @@ export default function Tablas() {
   useEffect(() => {
     const obtenerDocumentos = async () => {
       try {
-        const response = await fetch(API_URL + `/gradotitulos/vergradotitulo/`, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          API_URL + `/gradotitulos/vergradotitulo/`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("El servidor no respondió correctamente");
         }
@@ -47,28 +52,36 @@ export default function Tablas() {
       let filtered = documentos;
 
       if (filters.nombreapellido) {
-        filtered = filtered.filter(doc =>
-          doc.nombreapellido.toLowerCase().includes(filters.nombreapellido.toLowerCase())
+        filtered = filtered.filter((doc) =>
+          doc.nombreapellido
+            .toLowerCase()
+            .includes(filters.nombreapellido.toLowerCase())
         );
       }
 
       if (filters.dni) {
-        filtered = filtered.filter(doc => doc.dni.includes(filters.dni));
+        filtered = filtered.filter((doc) => doc.dni.includes(filters.dni));
       }
 
       if (filters.fechaexpedicion) {
-        filtered = filtered.filter(doc => doc.fechaexpedicion.includes(filters.fechaexpedicion));
+        filtered = filtered.filter((doc) =>
+          doc.fechaexpedicion.includes(filters.fechaexpedicion)
+        );
       }
 
       if (filters.facultadescuela) {
-        filtered = filtered.filter(doc =>
-          doc.facultadescuela.toLowerCase().includes(filters.facultadescuela.toLowerCase())
+        filtered = filtered.filter((doc) =>
+          doc.facultadescuela
+            .toLowerCase()
+            .includes(filters.facultadescuela.toLowerCase())
         );
       }
 
       if (filters.gradotitulo) {
-        filtered = filtered.filter(doc =>
-          doc.gradotitulo.toLowerCase().includes(filters.gradotitulo.toLowerCase())
+        filtered = filtered.filter((doc) =>
+          doc.gradotitulo
+            .toLowerCase()
+            .includes(filters.gradotitulo.toLowerCase())
         );
       }
 
@@ -81,7 +94,7 @@ export default function Tablas() {
   const handleFilterChange = (e) => {
     setFilters({
       ...filters,
-      [e.target.name]: e.target.value
+      [e.target.name]: e.target.value,
     });
   };
 
@@ -91,95 +104,94 @@ export default function Tablas() {
       dni: "",
       fechaexpedicion: "",
       facultadescuela: "",
-      gradotitulo: ""
+      gradotitulo: "",
     });
   };
 
   const handleSaveIdAndRedirect = (id) => {
-    localStorage.setItem('documentId', id);
-    navigate('/vergrado');
+    localStorage.setItem("documentId", id);
+    navigate("/vergrado");
   };
 
   return (
-    <div>
-      <div className="container mt-5 text-center">
-        <h1 className="title">Grados y Títulos</h1>
+    <div className="container mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
+      <h1 className="text-3xl font-bold text-center mb-6">Grados y Títulos</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
+        <Input
+          type="text"
+          name="nombreapellido"
+          placeholder="Filtrar por Nombre y Apellido"
+          value={filters.nombreapellido}
+          onChange={handleFilterChange}
+        />
+        <Input
+          type="text"
+          name="dni"
+          placeholder="Filtrar por DNI"
+          value={filters.dni}
+          onChange={handleFilterChange}
+        />
+        <Input
+          type="text"
+          name="fechaexpedicion"
+          placeholder="Filtrar por Fecha de Expedición"
+          value={filters.fechaexpedicion}
+          onChange={handleFilterChange}
+        />
+        <Input
+          type="text"
+          name="facultadescuela"
+          placeholder="Filtrar por Facultad o Escuela"
+          value={filters.facultadescuela}
+          onChange={handleFilterChange}
+        />
+        <Input
+          type="text"
+          name="gradotitulo"
+          placeholder="Filtrar por Grado o Título"
+          value={filters.gradotitulo}
+          onChange={handleFilterChange}
+        />
+        <Button onClick={clearFilters} className="button">
+          Limpiar Filtros
+        </Button>
       </div>
-      <div className="container mt-5">
-        <div className="filters-container">
-          <div className="filters">
-            <input
-              type="text"
-              name="nombreapellido"
-              placeholder="Filtrar por Nombre y Apellido"
-              value={filters.nombreapellido}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="dni"
-              placeholder="Filtrar por DNI"
-              value={filters.dni}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="fechaexpedicion"
-              placeholder="Filtrar por Fecha de Expedición"
-              value={filters.fechaexpedicion}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="facultadescuela"
-              placeholder="Filtrar por Facultad o Escuela"
-              value={filters.facultadescuela}
-              onChange={handleFilterChange}
-            />
-            <input
-              type="text"
-              name="gradotitulo"
-              placeholder="Filtrar por Grado o Título"
-              value={filters.gradotitulo}
-              onChange={handleFilterChange}
-            />
-            <button
-              onClick={clearFilters}
-              className="button"
-            >
-              Limpiar Filtros
-            </button>
-          </div>
-        </div>
-        <table className="custom-table">
-          <thead>
-            <tr>
-              <th scope="col">Nombre y Apellido</th>
-              <th scope="col">DNI</th>
-              <th scope="col">Fecha de Expedición</th>
-              <th scope="col">Facultad o Escuela</th>
-              <th scope="col">Grado o Título</th>
-              <th scope="col">Enlace</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredDocumentos.map((documento) => (
-              <tr key={documento.idgradotitulo}>
-                <td>{documento.nombreapellido}</td>
-                <td>{documento.dni}</td>
-                <td>{documento.fechaexpedicion}</td>
-                <td>{documento.facultadescuela}</td>
-                <td>{documento.gradotitulo}</td>
-                <td>
-                  <button onClick={() => handleSaveIdAndRedirect(documento.idgradotitulo)}>
-                    Ver
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <Table dataSource={filteredDocumentos} className="custom-table">
+        <Column
+          title="Nombre y Apellido"
+          dataIndex="nombreapellido"
+          key="nombreapellido"
+        />
+        <Column title="DNI" dataIndex="dni" key="dni" />
+        <Column
+          title="Fecha de Expedición"
+          dataIndex="fechaexpedicion"
+          key="fechaexpedicion"
+        />
+        <Column
+          title="Facultad o Escuela"
+          dataIndex="facultadescuela"
+          key="facultadescuela"
+        />
+        <Column
+          title="Grado o Título"
+          dataIndex="gradotitulo"
+          key="gradotitulo"
+        />
+        <Column
+          title="Enlace"
+          key="action"
+          render={(documento) => (
+            <Space size="middle">
+              <Button
+                onClick={() => handleSaveIdAndRedirect(documento.idgradotitulo)}
+              >
+                Ver
+              </Button>
+            </Space>
+          )}
+        />
+      </Table>
     </div>
   );
 }
