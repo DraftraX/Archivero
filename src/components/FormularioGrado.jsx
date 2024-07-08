@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Form, Input, Button, Upload, message } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { API_URL } from "../../url.js";
 
 const FormularioDocumento = () => {
   const navigate = useNavigate();
@@ -51,7 +52,7 @@ const FormularioDocumento = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/gradotitulos/nuevogradotitulo",
+        API_URL+"/gradotitulos/nuevogradotitulo",
         {
           method: "POST",
           headers: {

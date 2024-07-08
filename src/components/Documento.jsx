@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "../styles/DetalleDocumento.css";
+import { API_URL } from "../../url.js";
 
 export default function DocumentoDetalle() {
   const [documento, setDocumento] = useState(null);
@@ -19,7 +20,7 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}`,
+        const response = await fetch(API_URL+`/resolucion/verresolucion/${documentId}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -42,7 +43,7 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/resolucion/verresolucion/${documentId}/pdf`,
+        const response = await fetch(API_URL`/resolucion/verresolucion/${documentId}/pdf`,
           {
             headers: {
               'Content-Type': 'application/json',

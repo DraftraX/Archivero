@@ -2,6 +2,8 @@ import { Fragment, useState } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { API_URL } from "../../url.js";
+
 
 const navigation = [
   {
@@ -55,7 +57,7 @@ export default function Navbar() {
 
   const handleLogout = async () => {
     try {
-      const response = await fetch("http://localhost:8080/auth/logout", {
+      const response = await fetch(API_URL + "/auth/logout", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

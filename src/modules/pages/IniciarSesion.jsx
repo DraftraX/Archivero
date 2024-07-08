@@ -1,8 +1,10 @@
+// src/IniciarSesion.jsx
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { z } from "zod";
+import { API_URL } from "../../../url.js";
 
 const loginSchema = z.object({
   username: z
@@ -41,10 +43,10 @@ export function IniciarSesion() {
 
   const handleSubmit = async (values) => {
     try {
-      loginSchema.parse(values); // Validate using zod schema
-      setErrors({}); // Clear any previous errors
+      loginSchema.parse(values); 
+      setErrors({}); 
 
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post(API_URL + "/auth/login", { 
         username: values.username,
         password: values.password,
       });
@@ -52,7 +54,7 @@ export function IniciarSesion() {
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
         message.success("Inicio de sesión exitoso");
-        navigate("/perfil");
+        navigate("/paginaprincipal");
       } else {
         message.error("Credenciales incorrectas");
       }

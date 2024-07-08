@@ -19,6 +19,7 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
+import { API_URL } from "../../url.js";
 
 const { Title, Paragraph } = Typography;
 
@@ -52,7 +53,7 @@ const Perfil = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          `http://localhost:8080/usuario/verusuarioporusername/${username}`,
+          API_URL + `/usuario/verusuarioporusername/${username}`,
           {
             headers: {
               "Content-Type": "application/json",

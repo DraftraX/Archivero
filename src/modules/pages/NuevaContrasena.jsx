@@ -3,6 +3,7 @@ import '../../styles/ForgotPassword.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import Swal from 'sweetalert2';
+import { API_URL } from "../../../url.js";
 
 export function NuevaContrasena() {
     const [password, setPassword] = useState('');
@@ -56,7 +57,7 @@ export function NuevaContrasena() {
             password: password,
         };
 
-        const response = await fetch('http://localhost:8080/change-password/newpassword', {
+        const response = await fetch(API_URL + '/change-password/newpassword', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -17,7 +17,7 @@ import {
   message,
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
-
+import { API_URL } from "../../url.js";
 const { Option } = Select;
 const { Title } = Typography;
 
@@ -42,7 +42,7 @@ const FormularioDocumento = () => {
     const fetchCriterios = async () => {
       try {
         const response = await fetch(
-          "http://localhost:8080/tipocriterio/vercriterio/tipocriterios",
+          API_URL+"/tipocriterio/vercriterio/tipocriterios",
           {
             headers: {
               "Content-Type": "application/json",
@@ -102,7 +102,7 @@ const FormularioDocumento = () => {
       }
 
       const response = await fetch(
-        "http://localhost:8080/resolucion/nuevaresolucion",
+        API_URL+"/resolucion/nuevaresolucion",
         {
           method: "POST",
           headers: {

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Input, Select, Button, Table, Pagination } from "antd";
-import classNames from "classnames";
 import "../styles/Tabla.css";
+import { API_URL } from "../../url.js";
 
 const { Option } = Select;
 
@@ -29,7 +29,7 @@ export default function Tablas() {
 
       try {
         const response = await fetch(
-          `http://localhost:8080/resolucion/${message}`,
+          API_URL + `/resolucion/${message}`,
           {
             method: "GET",
             headers: {
@@ -47,7 +47,7 @@ export default function Tablas() {
 
         const idcriteriomayor = message.split("/").pop();
         const subcriteriosResponse = await fetch(
-          `http://localhost:8080/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
+          API_URL + `/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
           {
             method: "GET",
             headers: {

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Tabla.css";
+import { API_URL } from "../../url.js";
+
 
 export default function Tablas() {
   const navigate = useNavigate();
@@ -16,11 +18,10 @@ export default function Tablas() {
     gradotitulo: "",
   });
 
-  // Obtención de documentos desde la API
   useEffect(() => {
     const obtenerDocumentos = async () => {
       try {
-        const response = await fetch(`http://localhost:8080/gradotitulos/vergradotitulo/`, {
+        const response = await fetch(API_URL + `/gradotitulos/vergradotitulo/`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -41,7 +42,6 @@ export default function Tablas() {
     obtenerDocumentos();
   }, [token]);
 
-  // Aplicar filtros
   useEffect(() => {
     const applyFilters = () => {
       let filtered = documentos;
@@ -78,7 +78,6 @@ export default function Tablas() {
     applyFilters();
   }, [filters, documentos]);
 
-  // Manejo de cambios en los filtros
   const handleFilterChange = (e) => {
     setFilters({
       ...filters,
@@ -86,7 +85,6 @@ export default function Tablas() {
     });
   };
 
-  // Limpiar filtros
   const clearFilters = () => {
     setFilters({
       nombreapellido: "",
@@ -97,7 +95,6 @@ export default function Tablas() {
     });
   };
 
-  // Guardar ID del documento y redirigir
   const handleSaveIdAndRedirect = (id) => {
     localStorage.setItem('documentId', id);
     navigate('/vergrado');

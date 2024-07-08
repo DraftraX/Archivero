@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Steps, message } from "antd";
 import { useNavigate } from "react-router-dom";
-
+import { API_URL } from "../../url.js";
 const { Step } = Steps;
 
 const MultiStepForm = () => {
@@ -42,7 +42,7 @@ const MultiStepForm = () => {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/usuario/nuevousuario",
+        API_URL+"/usuario/nuevousuario",
         {
           method: "POST",
           headers: {

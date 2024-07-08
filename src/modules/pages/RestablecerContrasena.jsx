@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
-
+import { API_URL } from "../../../url.js";
 const { Item } = Form;
 
 export function RestablecerContrasena() {
@@ -17,7 +17,7 @@ export function RestablecerContrasena() {
 
     try {
       const response = await fetch(
-        "http://localhost:8080/change-password/enviarcorreo",
+        API_URL+"/change-password/enviarcorreo",
         {
           method: "POST",
           headers: {
