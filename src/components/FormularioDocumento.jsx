@@ -18,8 +18,21 @@ import {
 } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import { API_URL } from "../../url.js";
+import { z } from "zod";
 const { Option } = Select;
 const { Title } = Typography;
+
+// Define the document schema
+const documentSchema = z.object({
+  nrodoc: z.string().nonempty("El número de documento es obligatorio"),
+  titulo: z.string().nonempty("El título es obligatorio"),
+  estado: z.string().nonempty("El estado es obligatorio"),
+  fecha: z.string().nonempty("La fecha es obligatoria"),
+  duracion: z.union([z.string(), z.number()]),
+  tipoResolucion: z.string().nonempty("El tipo de resolución es obligatorio"),
+  idtipocriterio: z.number().min(1, "El criterio es obligatorio"),
+  pdf: z.any().nullable(),
+});
 
 const FormularioDocumento = () => {
   const navigate = useNavigate();
@@ -32,7 +45,7 @@ const FormularioDocumento = () => {
     fecha: "",
     duracion: 0,
     tipoResolucion: "",
-    idtipocriterio: "",
+    idtipocriterio: 0,
     pdf: null,
   });
 
@@ -42,7 +55,7 @@ const FormularioDocumento = () => {
     const fetchCriterios = async () => {
       try {
         const response = await fetch(
-          API_URL+"/tipocriterio/vercriterio/tipocriterios",
+          API_URL + "/tipocriterio/vercriterio/tipocriterios",
           {
             headers: {
               "Content-Type": "application/json",
@@ -76,13 +89,19 @@ const FormularioDocumento = () => {
     }
   };
 
+  const handleTipoResolucionChange = (checkedValues) => {
+    const tipoResolucion = checkedValues.includes("Temporal") ? "Temporal" : "Permanente";
+    setRequest({ ...Request, tipoResolucion });
+  };
+
   const handleSubmit = async (values) => {
     try {
-      // Convert the values object to match the Zod schema
       const parsedValues = {
         ...values,
+        fecha: values.fecha.format("YYYY-MM-DD"),
         duracion: Request.tipoResolucion === "Temporal" ? values.duracion : "",
         pdf: Request.pdf,
+        tipoResolucion: Request.tipoResolucion,
       };
 
       documentSchema.parse(parsedValues);
@@ -91,9 +110,9 @@ const FormularioDocumento = () => {
       formData.append("nrodoc", values.nrodoc);
       formData.append("titulo", values.titulo);
       formData.append("estado", values.estado);
-      formData.append("fecha", values.fecha);
-      formData.append("tipoResolucion", values.tipoResolucion);
-      if (values.tipoResolucion === "Temporal") {
+      formData.append("fecha", parsedValues.fecha);
+      formData.append("tipoResolucion", parsedValues.tipoResolucion);
+      if (parsedValues.tipoResolucion === "Temporal") {
         formData.append("duracion", values.duracion);
       }
       formData.append("idtipocriterio", values.idtipocriterio);
@@ -102,7 +121,7 @@ const FormularioDocumento = () => {
       }
 
       const response = await fetch(
-        API_URL+"/resolucion/nuevaresolucion",
+        API_URL + "/resolucion/nuevaresolucion",
         {
           method: "POST",
           headers: {
@@ -191,14 +210,7 @@ const FormularioDocumento = () => {
               },
             ]}
           >
-            <Checkbox.Group
-              onChange={(checkedValues) => {
-                const tipoResolucion = checkedValues.includes("Temporal")
-                  ? "Temporal"
-                  : "Permanente";
-                setRequest({ ...Request, tipoResolucion });
-              }}
-            >
+            <Checkbox.Group onChange={handleTipoResolucionChange}>
               <Row>
                 <Col span={12}>
                   <Checkbox value="Permanente">Permanente</Checkbox>

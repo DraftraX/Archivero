@@ -40,6 +40,8 @@ const MultiStepForm = () => {
 
     const token = localStorage.getItem("token");
 
+    console.log(UsuarioRequest);
+
     try {
       const response = await fetch(
         API_URL+"/usuario/nuevousuario",

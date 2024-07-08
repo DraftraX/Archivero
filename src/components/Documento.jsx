@@ -43,7 +43,7 @@ export default function DocumentoDetalle() {
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        const response = await fetch(API_URL`/resolucion/verresolucion/${documentId}/pdf`,
+        const response = await fetch(API_URL+`/resolucion/verresolucion/${documentId}/pdf`,
           {
             headers: {
               'Content-Type': 'application/json',
