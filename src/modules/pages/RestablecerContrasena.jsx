@@ -16,16 +16,13 @@ export function RestablecerContrasena() {
     };
 
     try {
-      const response = await fetch(
-        API_URL+"/change-password/enviarcorreo",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+      const response = await fetch(API_URL + "/change-password/enviarcorreo", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(requestBody),
+      });
 
       if (response.ok) {
         message.success("Correo enviado con éxito.");
@@ -41,13 +38,13 @@ export function RestablecerContrasena() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center bg-green-500 ">
       <Row justify="center" className="w-full">
         <Col xl={8} lg={10} md={12} sm={20} xs={24}>
           <Card className="bg-white shadow-lg rounded-lg overflow-hidden h-full">
             <div className="grid grid-cols-2">
               <div>
-                <div className="p-6">
+                <div className="p-1 ">
                   <h2 className="text-2xl font-semibold mb-4">
                     ¿Olvidaste tu Contraseña?
                   </h2>

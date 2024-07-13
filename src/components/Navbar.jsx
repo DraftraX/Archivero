@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { API_URL } from "../../url.js";
 
-
 const navigation = [
   {
     name: "Archivos de Gestión",
@@ -117,8 +116,8 @@ export default function Navbar() {
                   <Menu>
                     <Menu.Button className="flex items-center text-sm rounded-full focus:outline-none">
                       <img
-                        className="h-8 w-8 rounded-full"
-                        src="https://img.icons8.com/?size=100&id=7819&format=png&color=000000"
+                        className="h-full w-16 rounded-full"
+                        src="https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png"
                         alt="avatar"
                       />
                     </Menu.Button>
