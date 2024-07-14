@@ -7,14 +7,12 @@ export function RestablecerContrasena() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
+  const handleSubmit = async () => {
     const requestBody = {
       mailTo: email,
       username: username,
     };
-
+    
     try {
       const response = await fetch(API_URL + "/change-password/enviarcorreo", {
         method: "POST",
