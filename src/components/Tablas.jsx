@@ -21,7 +21,7 @@ export default function Tablas() {
   });
 
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10; // Número de elementos por página
+  const pageSize = 10;
 
   useEffect(() => {
     const obtenerDocumentos = async () => {

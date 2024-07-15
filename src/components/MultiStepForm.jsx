@@ -148,6 +148,8 @@ const MultiStepForm = () => {
                   {
                     required: true,
                     message: "Por favor ingresa tu teléfono",
+                  },
+                  {
                     min: 9,
                     message: "Número de teléfono inválido",
                   },

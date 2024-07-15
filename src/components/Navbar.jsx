@@ -67,7 +67,7 @@ export default function Navbar() {
       if (response.ok) {
         localStorage.removeItem("token");
         Swal.fire("¡Sesión cerrada con éxito!", "", "success");
-        navigate("/panelprincipal");
+        navigate("/login");
       } else {
         Swal.fire("¡Error al cerrar la sesión!", "", "error");
         console.error("Error al cerrar la sesión");

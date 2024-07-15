@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { IniciarSesion } from "./modules/pages/IniciarSesion";
 import { RestablecerContrasena } from "./modules/pages/RestablecerContrasena";
 import { NuevaContrasena } from "./modules/pages/NuevaContrasena";
-import { PanelPrincipal } from "./modules/pages/PanelPrincipal";
 import { PaginaPrincipal } from "./modules/pages/PaginaPrincipal";
 import { CrearUsuario } from "./modules/pages/CrearUsuario";
 import { PerfilUsuario } from "./modules/pages/PerfilUsuario"; 
@@ -33,7 +32,7 @@ function App() {
       <div>
         <Routes>
           {/* ruta inicial */}
-          <Route path="/" element={<Navigate to="/panelprincipal" />} />
+          <Route path="/" element={<Navigate to="/login" />} />
 
           {/* Rutas protegidas */}
           <Route path="/paginaprincipal" element={<PrivateRoute><PaginaPrincipal /></PrivateRoute>} />
@@ -50,7 +49,6 @@ function App() {
           <Route path="/login" element={<IniciarSesion />} /> 
           <Route path="/restore" element={<RestablecerContrasena />} />
           <Route path="/newpassword" element={<NuevaContrasena />} />
-          <Route path="/panelprincipal" element={<PanelPrincipal />} />
           
         </Routes>
       </div>

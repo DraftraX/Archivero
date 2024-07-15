@@ -5,7 +5,7 @@ import {
   Form,
   Input,
   Button,
-  Checkbox,
+  Radio,
   Select,
   DatePicker,
   Upload,
@@ -26,9 +26,8 @@ const { Title } = Typography;
 const documentSchema = z.object({
   nrodoc: z.string().nonempty("El número de documento es obligatorio"),
   titulo: z.string().nonempty("El título es obligatorio"),
-  estado: z.string().nonempty("El estado es obligatorio"),
   fecha: z.string().nonempty("La fecha es obligatoria"),
-  duracion: z.union([z.string(), z.number()]),
+  duracion: z.number().min(1, "La duración debe ser mayor a 0").optional(),
   tipoResolucion: z.string().nonempty("El tipo de resolución es obligatorio"),
   idtipocriterio: z.number().min(1, "El criterio es obligatorio"),
   pdf: z.any().nullable(),
@@ -43,7 +42,7 @@ const FormularioDocumento = () => {
     titulo: "",
     estado: "",
     fecha: "",
-    duracion: 0,
+    duracion: 1,
     tipoResolucion: "",
     idtipocriterio: 0,
     pdf: null,
@@ -89,10 +88,8 @@ const FormularioDocumento = () => {
     }
   };
 
-  const handleTipoResolucionChange = (checkedValues) => {
-    const tipoResolucion = checkedValues.includes("Temporal")
-      ? "Temporal"
-      : "Permanente";
+  const handleTipoResolucionChange = (e) => {
+    const tipoResolucion = e.target.value;
     setRequest({ ...Request, tipoResolucion });
   };
 
@@ -101,7 +98,10 @@ const FormularioDocumento = () => {
       const parsedValues = {
         ...values,
         fecha: values.fecha.format("YYYY-MM-DD"),
-        duracion: Request.tipoResolucion === "Temporal" ? values.duracion : "",
+        duracion:
+          Request.tipoResolucion === "Temporal"
+            ? Number(values.duracion)
+            : undefined,
         pdf: Request.pdf,
         tipoResolucion: Request.tipoResolucion,
       };
@@ -111,11 +111,13 @@ const FormularioDocumento = () => {
       const formData = new FormData();
       formData.append("nrodoc", values.nrodoc);
       formData.append("titulo", values.titulo);
-      formData.append("estado", values.estado);
       formData.append("fecha", parsedValues.fecha);
       formData.append("tipoResolucion", parsedValues.tipoResolucion);
       if (parsedValues.tipoResolucion === "Temporal") {
-        formData.append("duracion", values.duracion);
+        formData.append("duracion", parsedValues.duracion);
+        formData.append("estado", "Temporal");
+      } else {
+        formData.append("estado", "Permanente");
       }
       formData.append("idtipocriterio", values.idtipocriterio);
       if (Request.pdf) {
@@ -173,13 +175,6 @@ const FormularioDocumento = () => {
               >
                 <Input placeholder="Número de Documento" />
               </Form.Item>
-              <Form.Item
-                label="Estado"
-                name="estado"
-                rules={[{ required: true, message: "Debe ingresar un estado" }]}
-              >
-                <Input placeholder="Estado" />
-              </Form.Item>
             </div>
             <div>
               <Form.Item
@@ -209,16 +204,16 @@ const FormularioDocumento = () => {
               },
             ]}
           >
-            <Checkbox.Group onChange={handleTipoResolucionChange}>
+            <Radio.Group onChange={handleTipoResolucionChange}>
               <Row>
                 <Col span={12}>
-                  <Checkbox value="Permanente">Permanente</Checkbox>
+                  <Radio value="Permanente">Permanente</Radio>
                 </Col>
                 <Col span={12}>
-                  <Checkbox value="Temporal">Temporal</Checkbox>
+                  <Radio value="Temporal">Temporal</Radio>
                 </Col>
               </Row>
-            </Checkbox.Group>
+            </Radio.Group>
           </Form.Item>
           {Request.tipoResolucion === "Temporal" && (
             <Form.Item
@@ -226,11 +221,6 @@ const FormularioDocumento = () => {
               name="duracion"
               rules={[
                 { required: true, message: "Debe ingresar una duración" },
-                {
-                  type: "number",
-                  min: 1,
-                  message: "La duración debe ser mayor a 0",
-                },
               ]}
             >
               <Input type="number" placeholder="Duración (años)" />
