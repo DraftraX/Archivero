@@ -90,7 +90,9 @@ const FormularioDocumento = () => {
   };
 
   const handleTipoResolucionChange = (checkedValues) => {
-    const tipoResolucion = checkedValues.includes("Temporal") ? "Temporal" : "Permanente";
+    const tipoResolucion = checkedValues.includes("Temporal")
+      ? "Temporal"
+      : "Permanente";
     setRequest({ ...Request, tipoResolucion });
   };
 
@@ -120,16 +122,13 @@ const FormularioDocumento = () => {
         formData.append("pdf", Request.pdf);
       }
 
-      const response = await fetch(
-        API_URL + "/resolucion/nuevaresolucion",
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          body: formData,
-        }
-      );
+      const response = await fetch(API_URL + "/resolucion/nuevaresolucion", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
       if (response.ok) {
         message.success("¡Documento creado con éxito!");
