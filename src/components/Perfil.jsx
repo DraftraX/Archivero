@@ -116,6 +116,14 @@ const Perfil = () => {
                 Agregar Grados y Titulos
               </Button>
               <Button
+                type="default"
+                icon={<IdcardOutlined />}
+                block
+                onClick={() => navigate("/createposgrado")}
+              >
+                Agregar Maestria y Doctorado
+              </Button>
+              <Button
                 type="dashed"
                 icon={<SettingOutlined />}
                 block

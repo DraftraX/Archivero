@@ -12,6 +12,9 @@ import { CrearResolucion } from "./modules/pages/CrearResolucion";
 import { VistaGrados } from "./modules/pages/VistaGrados";
 import { VerGrado } from "./modules/pages/VerGrado";
 import { CrearGrado } from "./modules/pages/CrearGrado";
+import { VistaPosgrados } from "./modules/pages/VistaPosgrados";
+import { VerPosgrado } from "./modules/pages/VerPosgrado";
+import { CrearPosgrado } from "./modules/pages/CrearPosgrado";
 import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
@@ -36,14 +39,21 @@ function App() {
 
           {/* Rutas protegidas */}
           <Route path="/paginaprincipal" element={<PrivateRoute><PaginaPrincipal /></PrivateRoute>} />
+
+          <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
+          <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
+
           <Route path="/resoluciones" element={<PrivateRoute><VistaResoluciones /></PrivateRoute>} />
           <Route path="/verresolucion" element={<PrivateRoute><VerResolucion /></PrivateRoute>} />
           <Route path="/createresolucion" element={<PrivateRoute><CrearResolucion/></PrivateRoute>} />
-          <Route path="/perfil" element={<PrivateRoute><PerfilUsuario /></PrivateRoute>} />
-          <Route path="/create" element={<PrivateRoute><CrearUsuario /></PrivateRoute>} />
+          
           <Route path="/grados" element={<PrivateRoute><VistaGrados /></PrivateRoute>} />
           <Route path="/vergrado" element={<PrivateRoute><VerGrado /></PrivateRoute>} />
           <Route path="/creategrado" element={<PrivateRoute><CrearGrado/></PrivateRoute>} />
+          
+          <Route path="/posgrados" element={<PrivateRoute><VistaPosgrados/></PrivateRoute>} />
+          <Route path="/verposgrado" element={<PrivateRoute><VerPosgrado /></PrivateRoute>} />
+          <Route path="/createposgrado" element={<PrivateRoute><CrearPosgrado/></PrivateRoute>} />
           
           {/* demas rutas */}
           <Route path="/login" element={<IniciarSesion />} /> 
