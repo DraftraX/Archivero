@@ -43,10 +43,10 @@ export function IniciarSesion() {
 
   const handleSubmit = async (values) => {
     try {
-      loginSchema.parse(values); 
-      setErrors({}); 
+      loginSchema.parse(values);
+      setErrors({});
 
-      const response = await axios.post(API_URL + "/auth/login", { 
+      const response = await axios.post(API_URL + "/auth/login", {
         username: values.username,
         password: values.password,
       });
@@ -91,7 +91,7 @@ export function IniciarSesion() {
                 alt="Archivero UNSM"
               />
             </div>
-            <div className="p-8 lg:flex-1 lg:p-12">
+            <div className="p-4 lg:flex-1 lg:p-12">
               <h2 className="text-2xl font-bold text-center text-gray-700">
                 ARCHIVERO CENTRAL
               </h2>
