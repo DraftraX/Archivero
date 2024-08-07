@@ -14,37 +14,42 @@ export default function Tablas() {
     nro: "",
     nombre: "",
     fecha: "",
-    subcriterio: ""
+    subcriterio: "",
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 10;
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalElements, setTotalElements] = useState(0);
 
   useEffect(() => {
     const obtenerDocumentos = async () => {
       const message = localStorage.getItem("navMessage");
 
       try {
-        const response = await fetch(API_URL + `/resolucion/${message}`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          '${API_URL}/resolucion/${message}?page=${currentPage}&size=${pageSize}',
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: 'Bearer ${token}',
+            },
+          }
+        );
         if (!response.ok) {
           throw new Error("El servidor no respondió correctamente");
         }
         const data = await response.json();
-        setDocumentos(data);
-        setFilteredDocumentos(data);
+        setDocumentos(data.content);
+        setFilteredDocumentos(data.content);
+        setTotalElements(data.totalElements);
       } catch (error) {
         console.error("Error al obtener documentos:", error);
       }
     };
 
     obtenerDocumentos();
-  }, [token]);
+  }, [token, currentPage, pageSize]);
 
   useEffect(() => {
     const applyFilters = () => {
@@ -88,7 +93,7 @@ export default function Tablas() {
       nro: "",
       nombre: "",
       fecha: "",
-      subcriterio: ""
+      subcriterio: "",
     });
   };
 
@@ -111,7 +116,7 @@ export default function Tablas() {
   };
 
   const handleChangePage = (page) => {
-    setCurrentPage(page);
+    setCurrentPage(page - 1); // Convertir de 1-based a 0-based
   };
 
   const columns = [
@@ -147,10 +152,6 @@ export default function Tablas() {
       ),
     },
   ];
-
-  const indexOfLastDoc = currentPage * pageSize;
-  const indexOfFirstDoc = indexOfLastDoc - pageSize;
-  const currentDocs = filteredDocumentos.slice(indexOfFirstDoc, indexOfLastDoc);
 
   return (
     <div className="container mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
@@ -191,7 +192,7 @@ export default function Tablas() {
         </Button>
       </div>
       <Table
-        dataSource={currentDocs}
+        dataSource={filteredDocumentos}
         columns={columns}
         rowKey="nrodoc"
         className="custom-table"
@@ -199,8 +200,8 @@ export default function Tablas() {
       />
       <Pagination
         className="mt-4"
-        current={currentPage}
-        total={filteredDocumentos.length}
+        current={currentPage + 1}
+        total={totalElements}
         pageSize={pageSize}
         onChange={handleChangePage}
         showSizeChanger={false}

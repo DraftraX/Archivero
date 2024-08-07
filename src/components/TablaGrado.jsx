@@ -118,7 +118,7 @@ export default function Tablas() {
   };
 
   const handlePageChange = (page, pageSize) => {
-    setPage(page - 1); // El componente de paginación de Ant Design usa 1-based index
+    setPage(page - 1);
     setSize(pageSize);
   };
 
