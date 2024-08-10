@@ -19,7 +19,7 @@ import {
   PlusOutlined,
   SettingOutlined,
 } from "@ant-design/icons";
-import { API_URL } from "../../url.js";
+import { API_URL } from "../utils/ApiRuta";
 
 const { Title, Paragraph } = Typography;
 
@@ -114,6 +114,14 @@ const Perfil = () => {
                 onClick={() => navigate("/creategrado")}
               >
                 Agregar Grados y Titulos
+              </Button>
+              <Button
+                type="default"
+                icon={<IdcardOutlined />}
+                block
+                onClick={() => navigate("/createposgrado")}
+              >
+                Agregar Maestria y Doctorado
               </Button>
               <Button
                 type="dashed"

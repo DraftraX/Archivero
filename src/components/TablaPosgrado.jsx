@@ -16,27 +16,24 @@ export default function Tablas() {
     nombreapellido: "",
     dni: "",
     fechaexpedicion: "",
-    facultadescuela: "",
-    gradotitulo: "",
+    maestriadoctorado: "",
   });
 
   useEffect(() => {
     const obtenerDocumentos = async () => {
       try {
-        const response = await fetch(
-          API_URL + `/gradotitulos/vergradotitulo/`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await fetch(API_URL + `/posgrado/verposgrados/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
         if (!response.ok) {
           throw new Error("El servidor no respondió correctamente");
         }
         const data = await response.json();
+        console.log(data);
         setDocumentos(data);
         setFilteredDocumentos(data);
       } catch (error) {
@@ -69,19 +66,11 @@ export default function Tablas() {
         );
       }
 
-      if (filters.facultadescuela) {
+      if (filters.maestriadoctorado) {
         filtered = filtered.filter((doc) =>
-          doc.facultadescuela
+          doc.maestriadoctorado
             .toLowerCase()
-            .includes(filters.facultadescuela.toLowerCase())
-        );
-      }
-
-      if (filters.gradotitulo) {
-        filtered = filtered.filter((doc) =>
-          doc.gradotitulo
-            .toLowerCase()
-            .includes(filters.gradotitulo.toLowerCase())
+            .includes(filters.maestriadoctorado.toLowerCase())
         );
       }
 
@@ -103,19 +92,20 @@ export default function Tablas() {
       nombreapellido: "",
       dni: "",
       fechaexpedicion: "",
-      facultadescuela: "",
-      gradotitulo: "",
+      maestriadoctorado: "",
     });
   };
 
   const handleSaveIdAndRedirect = (id) => {
     localStorage.setItem("documentId", id);
-    navigate("/vergrado");
+    navigate("/verposgrado");
   };
 
   return (
     <div className="container mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">Grados y Títulos</h1>
+      <h1 className="text-3xl font-bold text-center mb-6">
+        Grados y Títulos de Posgrado
+      </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-4">
         <Input
           type="text"
@@ -140,16 +130,9 @@ export default function Tablas() {
         />
         <Input
           type="text"
-          name="facultadescuela"
-          placeholder="Filtrar por Facultad o Escuela"
-          value={filters.facultadescuela}
-          onChange={handleFilterChange}
-        />
-        <Input
-          type="text"
-          name="gradotitulo"
-          placeholder="Filtrar por Grado o Título"
-          value={filters.gradotitulo}
+          name="maestriadoctorado"
+          placeholder="Filtrar por Maestría o Doctorado"
+          value={filters.maestriadoctorado}
           onChange={handleFilterChange}
         />
         <Button onClick={clearFilters} className="button">
@@ -169,14 +152,9 @@ export default function Tablas() {
           key="fechaexpedicion"
         />
         <Column
-          title="Facultad o Escuela"
-          dataIndex="facultadescuela"
-          key="facultadescuela"
-        />
-        <Column
-          title="Grado o Título"
-          dataIndex="gradotitulo"
-          key="gradotitulo"
+          title="Maestría o Doctorado"
+          dataIndex="maestriadoctorado"
+          key="maestriadoctorado"
         />
         <Column
           title="Enlace"
@@ -184,7 +162,7 @@ export default function Tablas() {
           render={(documento) => (
             <Space size="middle">
               <Button
-                onClick={() => handleSaveIdAndRedirect(documento.idgradotitulo)}
+                onClick={() => handleSaveIdAndRedirect(documento.idposgrado)}
               >
                 Ver
               </Button>

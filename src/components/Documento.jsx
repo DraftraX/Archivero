@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Spin, Divider, Table } from "antd";
-import { API_URL } from "../../url.js";
+import { API_URL } from "../utils/ApiRuta";
 
 export default function DocumentoDetalle() {
   const [documento, setDocumento] = useState(null);

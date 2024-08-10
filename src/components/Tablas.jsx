@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Select, Button, Table, Pagination } from "antd";
+import { Input, Button, Table, Pagination } from "antd";
 import "../styles/Tabla.css";
-import { API_URL } from "../../url.js";
-
-const { Option } = Select;
+import { API_URL } from "../utils/ApiRuta";
 
 export default function Tablas() {
   const navigate = useNavigate();
@@ -12,12 +10,11 @@ export default function Tablas() {
 
   const [documentos, setDocumentos] = useState([]);
   const [filteredDocumentos, setFilteredDocumentos] = useState([]);
-  const [subcriterios, setSubcriterios] = useState([]);
-  const [selectedSubcriterio, setSelectedSubcriterio] = useState("");
   const [filters, setFilters] = useState({
     nro: "",
     nombre: "",
     fecha: "",
+    subcriterio: "",
   });
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -41,24 +38,6 @@ export default function Tablas() {
         const data = await response.json();
         setDocumentos(data);
         setFilteredDocumentos(data);
-
-        const idcriteriomayor = message.split("/").pop();
-        const subcriteriosResponse = await fetch(
-          API_URL +
-            `/tipocriterio/vercriterio/criteriomayor/${idcriteriomayor}`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!subcriteriosResponse.ok) {
-          throw new Error("Error al obtener subcriterios");
-        }
-        const subcriteriosData = await subcriteriosResponse.json();
-        setSubcriterios(subcriteriosData);
       } catch (error) {
         console.error("Error al obtener documentos:", error);
       }
@@ -85,9 +64,11 @@ export default function Tablas() {
         filtered = filtered.filter((doc) => doc.fecha.includes(filters.fecha));
       }
 
-      if (selectedSubcriterio) {
-        filtered = filtered.filter(
-          (doc) => doc.tipocriterio === selectedSubcriterio
+      if (filters.subcriterio) {
+        filtered = filtered.filter((doc) =>
+          doc.tipocriterio
+            .toLowerCase()
+            .includes(filters.subcriterio.toLowerCase())
         );
       }
 
@@ -95,7 +76,7 @@ export default function Tablas() {
     };
 
     applyFilters();
-  }, [filters, documentos, selectedSubcriterio]);
+  }, [filters, documentos]);
 
   const handleFilterChange = (e) => {
     setFilters({
@@ -104,17 +85,13 @@ export default function Tablas() {
     });
   };
 
-  const handleSubcriterioChange = (value) => {
-    setSelectedSubcriterio(value);
-  };
-
   const clearFilters = () => {
     setFilters({
       nro: "",
       nombre: "",
       fecha: "",
+      subcriterio: "",
     });
-    setSelectedSubcriterio("");
   };
 
   useEffect(() => {
@@ -173,7 +150,6 @@ export default function Tablas() {
     },
   ];
 
-  // Calcular el índice de inicio y fin de los documentos a mostrar en la página actual
   const indexOfLastDoc = currentPage * pageSize;
   const indexOfFirstDoc = indexOfLastDoc - pageSize;
   const currentDocs = filteredDocumentos.slice(indexOfFirstDoc, indexOfLastDoc);
@@ -205,18 +181,13 @@ export default function Tablas() {
           onChange={handleFilterChange}
           className="col-span-1"
         />
-        <Select
-          placeholder="Seleccionar Subcriterio"
-          value={selectedSubcriterio}
-          onChange={handleSubcriterioChange}
+        <Input
+          name="subcriterio"
+          placeholder="Filtrar por Tipo de Criterio"
+          value={filters.subcriterio}
+          onChange={handleFilterChange}
           className="col-span-1"
-        >
-          {subcriterios.map((subcriterio) => (
-            <Option key={subcriterio.mainid} value={subcriterio.criteryname}>
-              {subcriterio.criteryname}
-            </Option>
-          ))}
-        </Select>
+        />
         <Button onClick={clearFilters} className="col-span-1">
           Limpiar Filtros
         </Button>
@@ -226,7 +197,7 @@ export default function Tablas() {
         columns={columns}
         rowKey="nrodoc"
         className="custom-table"
-        pagination={false} // Desactiva la paginación de Ant Design
+        pagination={false}
       />
       <Pagination
         className="mt-4"

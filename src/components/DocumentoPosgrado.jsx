@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Spin, message, Divider } from "antd";
 import { API_URL } from "../utils/ApiRuta";
 
-export default function DocumentoDetalle() {
+export default function PosgradoDetalle() {
   const [documento, setDocumento] = useState(null);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ export default function DocumentoDetalle() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/gradotitulos/vergradotitulo/${documentId}`,
+          `${API_URL}/posgrado/verposgrado/${documentId}`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export default function DocumentoDetalle() {
     const fetchPdf = async () => {
       try {
         const response = await fetch(
-          `${API_URL}/gradotitulos/vergradotitulo/${documentId}/pdf`,
+          `${API_URL}/posgrado/verposgrado/${documentId}/pdf`,
           {
             headers: {
               "Content-Type": "application/json",
@@ -84,11 +84,11 @@ export default function DocumentoDetalle() {
   return (
     <div className="mx-auto max-w-4xl p-6 bg-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">
-        Detalle del Documento
+        Detalle del Posgrado
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <Divider orientation="left">Información del Documento</Divider>
+          <Divider orientation="left">Información del Posgrado</Divider>
           <div className="ant-descriptions">
             <div className="ant-descriptions-item">
               <div className="ant-descriptions-item-label">
@@ -114,16 +114,10 @@ export default function DocumentoDetalle() {
             </div>
             <div className="ant-descriptions-item">
               <div className="ant-descriptions-item-label">
-                Facultad o Escuela:
+                Maestría o Doctorado:
               </div>
               <div className="ant-descriptions-item-content">
-                {documento.facultadescuela}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">Grado o Título:</div>
-              <div className="ant-descriptions-item-content">
-                {documento.gradotitulo}
+                {documento.maestriadoctorado}
               </div>
             </div>
             <div className="ant-descriptions-item">

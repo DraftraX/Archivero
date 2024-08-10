@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Steps, message } from "antd";
 import { useNavigate } from "react-router-dom";
-import { API_URL } from "../../url.js";
+import { API_URL } from "../utils/ApiRuta";
 const { Step } = Steps;
 
 const MultiStepForm = () => {
@@ -51,17 +51,14 @@ const MultiStepForm = () => {
     const token = localStorage.getItem("token");
 
     try {
-      const response = await fetch(
-        "http://localhost:8080/usuario/nuevousuario",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(UsuarioRequest),
-        }
-      );
+      const response = await fetch(API_URL + "/usuario/nuevousuario", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(UsuarioRequest),
+      });
 
       if (response.ok) {
         message.success("¡Usuario creado con éxito!");

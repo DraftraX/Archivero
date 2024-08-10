@@ -1,21 +1,19 @@
-// src/IniciarSesion.jsx
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
 import { z } from "zod";
-import { API_URL } from "../../../url.js";
+import { API_URL } from "../../../utils/ApiRuta";
+import axios from "axios";
 
 const loginSchema = z.object({
   username: z
     .string()
     .email("Debe ingresar un correo válido")
     .min(1, "Ingrese su Usuario"),
-
   password: z.string().min(1, "Ingrese su contraseña"),
 });
 
-export function IniciarSesion() {
+export default function IniciarSesion() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
@@ -53,29 +51,15 @@ export function IniciarSesion() {
 
       if (response.data.token) {
         localStorage.setItem("token", response.data.token);
+        localStorage.setItem("username", values.username);
+        window.location.href = "/paginaprincipal";
         message.success("Inicio de sesión exitoso");
-        navigate("/paginaprincipal");
       } else {
         message.error("Credenciales incorrectas");
       }
     } catch (error) {
-      if (error instanceof z.ZodError) {
-        const formattedErrors = {};
-        error.errors.forEach((err) => {
-          formattedErrors[err.path[0]] = err.message;
-        });
-        setErrors(formattedErrors);
-      } else if (axios.isAxiosError(error)) {
-        console.error("Error en la solicitud:", error);
-        message.error(
-          "Hubo un problema al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
-        );
-      } else {
-        console.error("Error en el inicio de sesión:", error);
-        message.error(
-          "Hubo un problema desconocido al intentar iniciar sesión. Por favor, inténtalo de nuevo más tarde."
-        );
-      }
+      console.error("Error al iniciar sesión:", error);
+      message.error("Error al iniciar sesión");
     }
   };
 

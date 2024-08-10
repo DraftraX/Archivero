@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
-import { API_URL } from "../../../url.js";
+import { API_URL } from "../../../utils/ApiRuta";
 const { Item } = Form;
 
-export function RestablecerContrasena() {
+export default function RestablecerContrasena() {
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
 
@@ -12,7 +12,7 @@ export function RestablecerContrasena() {
       mailTo: email,
       username: username,
     };
-    
+
     try {
       const response = await fetch(API_URL + "/change-password/enviarcorreo", {
         method: "POST",

@@ -1,6 +1,6 @@
 import React from "react";
-import Navbar from "../../components/Navbar"; 
-import Perfil from "../../components/Perfil";
+import Navbar from "../../../components/Navbar/Navbar";
+import Perfil from "../../../components/Perfil";
 
 export function PerfilUsuario() {
   return (

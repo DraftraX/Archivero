@@ -23,13 +23,14 @@ const documentSchema = z.object({
   nombreapellido: z.string().nonempty("El nombre y apellido son obligatorios"),
   dni: z.string().nonempty("El DNI es obligatorio"),
   fechaexpedicion: z.string().nonempty("La fecha de expedición es obligatoria"),
-  facultadescuela: z.string().nonempty("La facultad o escuela es obligatoria"),
-  gradotitulo: z.string().nonempty("El grado o título es obligatorio"),
+  maestriadoctorado: z
+    .string()
+    .nonempty("El grado de maestría o doctorado es obligatorio"),
   idresolucion: z.string().nonempty("La resolución es obligatoria"),
   pdf: z.any().nullable(),
 });
 
-const FormularioGrado = () => {
+const FormularioPosgrado = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
 
@@ -37,8 +38,7 @@ const FormularioGrado = () => {
     nombreapellido: "",
     dni: "",
     fechaexpedicion: "",
-    facultadescuela: "",
-    gradotitulo: "",
+    maestriadoctorado: "",
     idresolucion: "",
     pdf: null,
   });
@@ -66,14 +66,15 @@ const FormularioGrado = () => {
       formData.append("nombreapellido", values.nombreapellido);
       formData.append("dni", values.dni);
       formData.append("fechaexpedicion", parsedValues.fechaexpedicion);
-      formData.append("facultadescuela", values.facultadescuela);
-      formData.append("gradotitulo", values.gradotitulo);
+      formData.append("maestriadoctorado", values.maestriadoctorado);
       formData.append("idresolucion", values.idresolucion);
       if (Request.pdf) {
         formData.append("pdf", Request.pdf);
       }
 
-      const response = await fetch(API_URL + "/gradotitulos/nuevogradotitulo", {
+      console.log(values.maestriadoctorado);
+
+      const response = await fetch(API_URL + "/posgrado/nuevoposgrado", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -102,7 +103,7 @@ const FormularioGrado = () => {
     <div className="h-full">
       <Card style={{ maxWidth: 800, margin: "0 auto", padding: 24 }}>
         <Title level={2} style={{ textAlign: "center" }}>
-          Formulario de Grado
+          Formulario de Posgrado
         </Title>
         <Form
           id="msform"
@@ -146,32 +147,20 @@ const FormularioGrado = () => {
                 <DatePicker style={{ width: "100%" }} />
               </Form.Item>
               <Form.Item
-                label="Facultad o Escuela"
-                name="facultadescuela"
+                label="Grado de Maestría o Doctorado"
+                name="maestriadoctorado"
                 rules={[
                   {
                     required: true,
-                    message: "Debe ingresar la facultad o escuela",
+                    message: "Debe ingresar el grado de maestría o doctorado",
                   },
                 ]}
               >
-                <Input placeholder="Facultad o Escuela" />
+                <Input placeholder="Maestría o Doctorado" />
               </Form.Item>
             </div>
           </div>
 
-          <Form.Item
-            label="Grado o Título"
-            name="gradotitulo"
-            rules={[
-              {
-                required: true,
-                message: "Debe ingresar el grado o título",
-              },
-            ]}
-          >
-            <Input placeholder="Grado o Título" />
-          </Form.Item>
           <Form.Item
             label="Resolución"
             name="idresolucion"
@@ -211,4 +200,4 @@ const FormularioGrado = () => {
   );
 };
 
-export default FormularioGrado;
+export default FormularioPosgrado;
