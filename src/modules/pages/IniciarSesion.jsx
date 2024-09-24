@@ -1,9 +1,9 @@
-// src/IniciarSesion.jsx
 import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { z } from "zod";
+import ReCAPTCHA from "react-google-recaptcha";
 import { API_URL } from "../../../url.js";
 
 const loginSchema = z.object({
@@ -11,13 +11,13 @@ const loginSchema = z.object({
     .string()
     .email("Debe ingresar un correo válido")
     .min(1, "Ingrese su Usuario"),
-
   password: z.string().min(1, "Ingrese su contraseña"),
 });
 
 export function IniciarSesion() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -41,14 +41,25 @@ export function IniciarSesion() {
     }
   };
 
+  const handleCaptchaChange = (token) => {
+    setCaptchaToken(token);
+    console.log("CAPTCHA Token:", token);
+  };
+
   const handleSubmit = async (values) => {
     try {
-      loginSchema.parse(values); 
-      setErrors({}); 
+      loginSchema.parse(values);
+      setErrors({});
 
-      const response = await axios.post(API_URL + "/auth/login", { 
+      if (!captchaToken) {
+        message.error("Por favor, complete el CAPTCHA.");
+        return;
+      }
+
+      const response = await axios.post(API_URL + "/auth/login", {
         username: values.username,
         password: values.password,
+        recaptchaResponse: captchaToken,
       });
 
       if (response.data.token) {
@@ -137,6 +148,14 @@ export function IniciarSesion() {
                     </p>
                   )}
                 </Form.Item>
+
+                <Form.Item>
+                  <ReCAPTCHA
+                    sitekey="6Lcs1U0qAAAAAKrgSA6QXMBD7ziudNsw5jtjCBdF"
+                    onChange={handleCaptchaChange}
+                  />
+                </Form.Item>
+
                 <Form.Item>
                   <Button
                     type="primary"
