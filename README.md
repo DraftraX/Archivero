@@ -34,7 +34,7 @@ Sigue estos sencillos pasos para poner en marcha el proyecto en tu entorno local
 4. Accede a la aplicación en tu navegador en http://localhost:5173.
 
 ## 📂 Estructura del Proyecto
-    ```bash
+   ```bash
    ├── src
    │   ├── assets      # Imágenes, fuentes y otros recursos estáticos
    │   ├── components  # Componentes reutilizables
