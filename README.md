@@ -30,7 +30,7 @@ Sigue estos sencillos pasos para poner en marcha el proyecto en tu entorno local
 2. Ejecuta el entorno de desarrollo:
 
    ```bash
-   npm install
+   npm run dev
 4. Accede a la aplicación en tu navegador en http://localhost:5173.
    
 ---
