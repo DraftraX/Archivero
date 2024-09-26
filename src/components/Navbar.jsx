@@ -1,7 +1,7 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-
+import { useNavigate } from "react-router-dom";
 
 const navigation = [
   { name: "Archivos de Gestion", href: "#", current: false },
@@ -15,7 +15,35 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-export default function Navbar() {
+export default function Navbar()
+{
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        alert("Sesión cerrada con éxito.");
+        navigate("/panelprincipal");
+      }
+      else
+      {
+        alert("Error al cerrar la sesión.");
+        console.error('Error al cerrar la sesión');
+      }
+    } catch (error)
+    {
+      console.error('Error al cerrar la sesión:', error);
+    }
+  };
+
   return (
     <Disclosure as="nav" className="bg-green-600">
       {() => (
@@ -111,15 +139,15 @@ export default function Navbar() {
                       </Menu.Item>
                       <Menu.Item>
                         {({ active }) => (
-                          <a
-                            href="/logout"
+                          <button
+                            onClick={handleLogout}
                             className={classNames(
                               active ? "bg-gray-100" : "",
-                              "block px-4 py-2 text-sm text-gray-700"
+                              "block w-full px-4 py-2 text-left text-sm text-gray-700"
                             )}
                           >
                             Sign out
-                          </a>
+                          </button>
                         )}
                       </Menu.Item>
                     </Menu.Items>

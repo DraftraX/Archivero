@@ -27,12 +27,12 @@ export default function Tablas() {
 
       try {
         const response = await fetch(
-          '${API_URL}/resolucion/${message}?page=${currentPage}&size=${pageSize}',
+          "${API_URL}/resolucion/${message}?page=${currentPage}&size=${pageSize}",
           {
             method: "GET",
             headers: {
               "Content-Type": "application/json",
-              Authorization: 'Bearer ${token}',
+              Authorization: "Bearer ${token}",
             },
           }
         );

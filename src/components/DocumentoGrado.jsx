@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Spin, message, Divider } from "antd";
+import { Spin, message, Divider, Card, Descriptions } from "antd";
 import { API_URL } from "../utils/ApiRuta";
+import "../styles/VerDocumento.css";
 
 export default function DocumentoDetalle() {
   const [documento, setDocumento] = useState(null);
@@ -74,79 +75,73 @@ export default function DocumentoDetalle() {
   }, [documentId, token]);
 
   if (loading) {
-    return <Spin size="large" />;
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return (
+      <div className="flex items-center justify-center h-screen text-red-500">
+        <p>Error: {error}</p>
+      </div>
+    );
   }
 
   return (
-    <div className="mx-auto max-w-4xl p-6 bg-white shadow-lg rounded-lg">
-      <h1 className="text-3xl font-bold text-center mb-6">
+    <div className=" max-w-full h-full p-8 bg-gray-50 shadow-lg rounded-lg mt-6">
+      <h1 className="text-4xl font-semibold text-center text-gray-800 mb-8">
         Detalle del Documento
       </h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div>
-          <Divider orientation="left">Información del Documento</Divider>
-          <div className="ant-descriptions">
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">
-                Nombre y Apellido:
-              </div>
-              <div className="ant-descriptions-item-content">
-                {documento.nombreapellido}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">DNI:</div>
-              <div className="ant-descriptions-item-content">
-                {documento.dni}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">
-                Fecha de Expedición:
-              </div>
-              <div className="ant-descriptions-item-content">
-                {documento.fechaexpedicion}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">
-                Facultad o Escuela:
-              </div>
-              <div className="ant-descriptions-item-content">
-                {documento.facultadescuela}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">Grado o Título:</div>
-              <div className="ant-descriptions-item-content">
-                {documento.gradotitulo}
-              </div>
-            </div>
-            <div className="ant-descriptions-item">
-              <div className="ant-descriptions-item-label">
-                ID de Resolución:
-              </div>
-              <div className="ant-descriptions-item-content">
-                {documento.idresolucion}
-              </div>
-            </div>
+      <div className="division gap-8">
+        {/* Información del Documento */}
+        <Card bordered={false} className="shadow-lg">
+          <Divider orientation="left">
+            <h2 className="text-2xl font-semibold">
+              Información del Documento
+            </h2>
+          </Divider>
+          <Descriptions bordered column={1} labelStyle={{ fontWeight: "bold" }}>
+            <Descriptions.Item label="Nombre y Apellido">
+              {documento.nombreapellido}
+            </Descriptions.Item>
+            <Descriptions.Item label="DNI">{documento.dni}</Descriptions.Item>
+            <Descriptions.Item label="Fecha de Expedición">
+              {documento.fechaexpedicion}
+            </Descriptions.Item>
+            <Descriptions.Item label="Facultad o Escuela">
+              {documento.facultadescuela}
+            </Descriptions.Item>
+            <Descriptions.Item label="Grado o Título">
+              {documento.gradotitulo}
+            </Descriptions.Item>
+            <Descriptions.Item label="ID de Resolución">
+              {documento.idresolucion}
+            </Descriptions.Item>
+          </Descriptions>
+        </Card>
+
+        {/* PDF del Documento */}
+        <Card bordered={false} className="shadow-lg">
+          <Divider orientation="left">
+            <h2 className="text-2xl font-semibold">Documento en PDF</h2>
+          </Divider>
+          <div className="border border-gray-300 rounded-lg h-96 overflow-hidden">
+            {pdfUrl ? (
+              <embed
+                className="w-full h-full"
+                src={pdfUrl}
+                type="application/pdf"
+              />
+            ) : (
+              <p className="text-center text-gray-500">
+                No se pudo cargar el PDF.
+              </p>
+            )}
           </div>
-        </div>
-        <div className="border border-gray-200 rounded-lg p-4">
-          {pdfUrl ? (
-            <embed
-              className="w-full h-full"
-              src={pdfUrl}
-              type="application/pdf"
-            />
-          ) : (
-            <p>No se pudo cargar el PDF.</p>
-          )}
-        </div>
+        </Card>
       </div>
     </div>
   );
