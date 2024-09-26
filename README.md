@@ -32,20 +32,7 @@ Sigue estos sencillos pasos para poner en marcha el proyecto en tu entorno local
    ```bash
    npm install
 4. Accede a la aplicación en tu navegador en http://localhost:5173.
-
-## 📂 Estructura del Proyecto
-   ```bash
-   ├── src
-   │   ├── assets      # Imágenes, fuentes y otros recursos estáticos
-   │   ├── components  # Componentes reutilizables
-   │   ├── pages       # Vistas principales del sistema
-   │   ├── styles      # Archivos CSS/SCSS globales
-   │   ├── App.jsx     # Componente principal de la aplicación
-   │   └── main.jsx    # Punto de entrada de la aplicación
-   ├── public          # Archivos públicos (favicon, index.html)
-   ├── package.json    # Dependencias y scripts
-   ├── vite.config.js  # Configuración de Vite
-   └── README.md       # Documentación del proyecto
+   
 ---
 
 ## ✨ **Características**
@@ -90,6 +77,7 @@ Sigue estos sencillos pasos para poner en marcha el proyecto en tu entorno local
 4. Sube la rama:
    ```bash
    git push origin mi-nueva-rama
+
    
 ## 📄 Licencia
 Este proyecto está bajo la Licencia MIT. Puedes consultar más detalles en el archivo LICENSE.
@@ -97,3 +85,17 @@ Este proyecto está bajo la Licencia MIT. Puedes consultar más detalles en el a
 ## **¡Gracias por usar el Sistema de Archivo Central de la UNSM! ✨**
 
 Este es el resto del contenido que faltaba en tu **README.md**. Ahora deberías tenerlo completo y listo para subirlo a tu repositorio. ¡Espero que sea útil!
+
+## 📂 Estructura del Proyecto
+   ```bash
+   ├── src
+   │   ├── assets      # Imágenes, fuentes y otros recursos estáticos
+   │   ├── components  # Componentes reutilizables
+   │   ├── pages       # Vistas principales del sistema
+   │   ├── styles      # Archivos CSS/SCSS globales
+   │   ├── App.jsx     # Componente principal de la aplicación
+   │   └── main.jsx    # Punto de entrada de la aplicación
+   ├── public          # Archivos públicos (favicon, index.html)
+   ├── package.json    # Dependencias y scripts
+   ├── vite.config.js  # Configuración de Vite
+   └── README.md       # Documentación del proyecto
