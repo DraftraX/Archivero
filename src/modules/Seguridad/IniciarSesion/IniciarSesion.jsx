@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Form, Input, Button, Card, Row, Col, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import { z } from "zod";
-import { API_URL } from "../../../utils/ApiRuta";
 import axios from "axios";
+import ReCAPTCHA from "react-google-recaptcha";
+import { API_URL } from "../../../utils/ApiRuta";
 
 const loginSchema = z.object({
   username: z
@@ -16,6 +17,7 @@ const loginSchema = z.object({
 export default function IniciarSesion() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -39,14 +41,25 @@ export default function IniciarSesion() {
     }
   };
 
+  const handleCaptchaChange = (token) => {
+    setCaptchaToken(token);
+    console.log("CAPTCHA Token:", token);
+  };
+
   const handleSubmit = async (values) => {
     try {
       loginSchema.parse(values);
       setErrors({});
 
+      if (!captchaToken) {
+        message.error("Por favor, complete el CAPTCHA.");
+        return;
+      }
+
       const response = await axios.post(API_URL + "/auth/login", {
         username: values.username,
         password: values.password,
+        recaptchaResponse: captchaToken,
       });
 
       if (response.data.token) {
@@ -121,6 +134,14 @@ export default function IniciarSesion() {
                     </p>
                   )}
                 </Form.Item>
+
+                <Form.Item>
+                  <ReCAPTCHA
+                    sitekey="6Lcs1U0qAAAAAKrgSA6QXMBD7ziudNsw5jtjCBdF"
+                    onChange={handleCaptchaChange}
+                  />
+                </Form.Item>
+
                 <Form.Item>
                   <Button
                     type="primary"

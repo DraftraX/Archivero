@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Input, Button, Table, Space } from "antd";
+import { Input, Button, Table, Space, Pagination } from "antd";
 import "../styles/Tabla.css";
 import { API_URL } from "../utils/ApiRuta";
 
@@ -19,12 +19,15 @@ export default function Tablas() {
     facultadescuela: "",
     gradotitulo: "",
   });
+  const [page, setPage] = useState(0);
+  const [size, setSize] = useState(10);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
     const obtenerDocumentos = async () => {
       try {
         const response = await fetch(
-          API_URL + `/gradotitulos/vergradotitulo/`,
+          `${API_URL}/gradotitulos/vergradotitulo?page=${page}&size=${size}`,
           {
             method: "GET",
             headers: {
@@ -37,15 +40,16 @@ export default function Tablas() {
           throw new Error("El servidor no respondió correctamente");
         }
         const data = await response.json();
-        setDocumentos(data);
-        setFilteredDocumentos(data);
+        setDocumentos(data.content);
+        setFilteredDocumentos(data.content);
+        setTotal(data.totalElements);
       } catch (error) {
         console.error("Error al obtener documentos:", error);
       }
     };
 
     obtenerDocumentos();
-  }, [token]);
+  }, [token, page, size]);
 
   useEffect(() => {
     const applyFilters = () => {
@@ -113,6 +117,11 @@ export default function Tablas() {
     navigate("/vergrado");
   };
 
+  const handlePageChange = (page, pageSize) => {
+    setPage(page - 1);
+    setSize(pageSize);
+  };
+
   return (
     <div className="container mx-auto mt-10 p-4 bg-white shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold text-center mb-6">Grados y Títulos</h1>
@@ -156,7 +165,7 @@ export default function Tablas() {
           Limpiar Filtros
         </Button>
       </div>
-      <Table dataSource={filteredDocumentos} className="custom-table">
+      <Table dataSource={filteredDocumentos} rowKey="idgradotitulo" pagination={false} className="custom-table">
         <Column
           title="Nombre y Apellido"
           dataIndex="nombreapellido"
@@ -192,6 +201,12 @@ export default function Tablas() {
           )}
         />
       </Table>
+      <Pagination
+        current={page + 1}
+        pageSize={size}
+        total={total}
+        onChange={handlePageChange}
+      />
     </div>
   );
 }
