@@ -86,9 +86,6 @@ Este proyecto está bajo la Licencia MIT. Puedes consultar más detalles en el a
 
 Este es el resto del contenido que faltaba en tu **README.md**. Ahora deberías tenerlo completo y listo para subirlo a tu repositorio. ¡Espero que sea útil!
 
-```bash
-   eduardo agarpro
-
 ## 📂 Estructura del Proyecto
    ```bash
    ├── src
