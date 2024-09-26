@@ -23,3 +23,27 @@ Sigue estos sencillos pasos para poner en marcha el proyecto en tu entorno local
    ```bash
    git clone https://github.com/DraftraX/Archivero.git
    cd Archivero
+2. Instala las dependendicas:
+
+   ```bash
+   npm install
+2. Ejecuta el entorno de desarrollo:
+
+   ```bash
+   npm install
+4. Accede a la aplicación en tu navegador en http://localhost:5173.
+
+## 📂 Estructura del Proyecto
+
+```bash
+├── src
+│   ├── assets      # Imágenes, fuentes y otros recursos estáticos
+│   ├── components  # Componentes reutilizables
+│   ├── pages       # Vistas principales del sistema
+│   ├── styles      # Archivos CSS/SCSS globales
+│   ├── App.jsx     # Componente principal de la aplicación
+│   └── main.jsx    # Punto de entrada de la aplicación
+├── public          # Archivos públicos (favicon, index.html)
+├── package.json    # Dependencias y scripts
+├── vite.config.js  # Configuración de Vite
+└── README.md       # Documentación del proyecto
